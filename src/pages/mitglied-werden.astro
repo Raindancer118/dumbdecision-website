@@ -173,7 +173,60 @@ import PageHeader from '../components/PageHeader.astro';
             <div class="ornament-line"></div>
           </div>
 
-          <!-- ── 4. Bestätigung ── -->
+          <div class="ornament" aria-hidden="true">
+            <div class="ornament-line"></div>
+            <div class="ornament-glyph">✦</div>
+            <div class="ornament-line"></div>
+          </div>
+
+          <!-- ── 4. Einwilligungen ── -->
+          <div class="form-section">
+            <div class="section-label">Medien &amp; Einwilligungen</div>
+            <p class="consent-intro">
+              Diese Einwilligungen sind freiwillig und für die Mitgliedschaft nicht erforderlich.
+              Du kannst sie jederzeit widerrufen.
+            </p>
+
+            <div class="opt-group">
+              <p class="opt-group-label">Live-Streaming</p>
+              <label class="opt-label" for="streamingVideo">
+                <input type="checkbox" id="streamingVideo" name="streamingVideo" />
+                <span>Ich bin einverstanden, dass Kampagnen, an denen ich teilnehme, mit <strong>Video- und Audiofeed</strong> live übertragen werden dürfen (z.&nbsp;B. auf Twitch).</span>
+              </label>
+              <label class="opt-label" for="streamingAudio">
+                <input type="checkbox" id="streamingAudio" name="streamingAudio" />
+                <span>Ich bin einverstanden, dass Kampagnen, an denen ich teilnehme, <strong>ohne Videobild, aber mit Audiofeed</strong> live übertragen werden dürfen.</span>
+              </label>
+            </div>
+
+            <div class="opt-group">
+              <p class="opt-group-label">Podcast</p>
+              <label class="opt-label" for="podcast">
+                <input type="checkbox" id="podcast" name="podcast" />
+                <span>Ich bin einverstanden, dass <strong>Audioaufnahmen meiner Stimme</strong> in Podcast-Formaten des Vereins verwendet werden dürfen.</span>
+              </label>
+            </div>
+
+            <div class="opt-group">
+              <p class="opt-group-label">Sonstiges</p>
+              <label class="opt-label" for="emailDigital">
+                <input type="checkbox" id="emailDigital" name="emailDigital" />
+                <span>Ich möchte Einladungen zur Mitgliederversammlung und wichtige Vereinsinformationen <strong>per E-Mail</strong> erhalten (spart Porto).</span>
+              </label>
+              <label class="opt-label" for="photoConsent">
+                <input type="checkbox" id="photoConsent" name="photoConsent" />
+                <span>Ich erteile mein Einverständnis zur Verwendung von <strong>Fotos/Bildern meiner Person</strong> auf der Vereinswebsite oder in Vereinspublikationen.</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="ornament" aria-hidden="true">
+            <div class="ornament-line"></div>
+            <div class="ornament-glyph">✦</div>
+            <div class="ornament-line"></div>
+          </div>
+
+          <!-- ── 5. Unterschrift & Bestätigung ── -->
           <div class="form-section form-section--submit">
 
             <label class="consent-label" for="consent">
@@ -186,6 +239,22 @@ import PageHeader from '../components/PageHeader.astro';
                 zu und erkläre mich mit der Verarbeitung meiner Daten für Vereinszwecke einverstanden.
               </span>
             </label>
+
+            <!-- Digitale Unterschrift -->
+            <div class="signature-block">
+              <div class="sig-place-date" id="sigPlaceDate"></div>
+              <div class="field">
+                <label for="unterschrift">Unterschrift <span class="req">*</span></label>
+                <input type="text" id="unterschrift" name="unterschrift"
+                  placeholder="Vor- und Nachname eintippen …"
+                  autocomplete="name" required />
+              </div>
+              <div class="sig-preview" id="sigPreview" aria-hidden="true"></div>
+              <p class="sig-legal">
+                Mit der Eingabe deines Namens bestätigst du, dass alle Angaben korrekt sind.
+                Diese digitale Unterschrift ist <strong>rechtlich verbindlich</strong>.
+              </p>
+            </div>
 
             <div id="formError" class="form-notice form-notice--err" hidden></div>
 
@@ -372,9 +441,31 @@ import PageHeader from '../components/PageHeader.astro';
   checkName('vorname', 'vorname-hint');
   checkName('nachname', 'nachname-hint');
 
+  // ── Signature ──────────────────────────────────────────────────────────────
+  const sigInput     = document.getElementById('unterschrift') as HTMLInputElement;
+  const sigPreview   = document.getElementById('sigPreview')   as HTMLDivElement;
+  const sigPlaceDate = document.getElementById('sigPlaceDate') as HTMLDivElement;
+
+  // Auto-fill Ort + Datum
+  function updatePlaceDate() {
+    const ort  = ortInput.value.trim();
+    const date = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
+    sigPlaceDate.textContent = ort ? `${ort}, ${date}` : date;
+  }
+  ortInput.addEventListener('input', updatePlaceDate);
+  updatePlaceDate();
+
+  sigInput.addEventListener('input', () => {
+    sigPreview.textContent = sigInput.value || '';
+    updateSubmit();
+  });
+
   // ── OTP submit-button gating ────────────────────────────────────────────────
   function updateSubmit() {
-    const ready = otpSent && otpInput.value.trim().length === 6 && consentBox.checked;
+    const ready = otpSent
+      && otpInput.value.trim().length === 6
+      && consentBox.checked
+      && sigInput.value.trim().length >= 2;
     submitBtn.disabled = !ready;
   }
 
@@ -458,11 +549,17 @@ import PageHeader from '../components/PageHeader.astro';
       strasse:     (document.getElementById('strasse')   as HTMLInputElement).value.trim(),
       plz:         (document.getElementById('plz')       as HTMLInputElement).value.trim(),
       ort:         (document.getElementById('ort')       as HTMLInputElement).value.trim(),
-      discord:     (document.getElementById('discord')   as HTMLInputElement).value.trim() || undefined,
-      erfahrung:   (document.getElementById('erfahrung') as HTMLSelectElement).value,
-      aufmerksam:  (document.getElementById('aufmerksam') as HTMLInputElement).value.trim() || undefined,
-      motivation:  (document.getElementById('motivation') as HTMLTextAreaElement).value.trim(),
-      otp:         otpInput.value.trim(),
+      discord:        (document.getElementById('discord')   as HTMLInputElement).value.trim() || undefined,
+      erfahrung:      (document.getElementById('erfahrung') as HTMLSelectElement).value,
+      aufmerksam:     (document.getElementById('aufmerksam') as HTMLInputElement).value.trim() || undefined,
+      motivation:     (document.getElementById('motivation') as HTMLTextAreaElement).value.trim(),
+      streamingVideo: (document.getElementById('streamingVideo') as HTMLInputElement).checked,
+      streamingAudio: (document.getElementById('streamingAudio') as HTMLInputElement).checked,
+      podcast:        (document.getElementById('podcast')        as HTMLInputElement).checked,
+      emailDigital:   (document.getElementById('emailDigital')   as HTMLInputElement).checked,
+      photoConsent:   (document.getElementById('photoConsent')   as HTMLInputElement).checked,
+      unterschrift:   sigInput.value.trim(),
+      otp:            otpInput.value.trim(),
     };
 
     const res = await fetch('/api/membership/submit', {
@@ -752,6 +849,89 @@ import PageHeader from '../components/PageHeader.astro';
     color: var(--text);
     outline: none;
   }
+
+  /* ── Opt-in groups ── */
+  .consent-intro {
+    font-size: 0.82rem;
+    color: var(--dim);
+    line-height: 1.7;
+    margin-bottom: 1.75rem;
+    font-style: italic;
+  }
+  .opt-group {
+    margin-bottom: 1.5rem;
+    padding-left: 0;
+  }
+  .opt-group-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--parch);
+    margin: 0 0 0.75rem;
+  }
+  .opt-label {
+    display: flex;
+    gap: 0.85rem;
+    align-items: flex-start;
+    cursor: pointer;
+    margin-bottom: 0.85rem;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1rem;
+    color: var(--text);
+  }
+  .opt-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    accent-color: var(--parch);
+    margin-top: 0.2rem;
+    cursor: pointer;
+    padding: 0;
+  }
+  .opt-label span {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--dim);
+  }
+  .opt-label strong { color: var(--parch-lt); font-weight: 500; }
+
+  /* ── Signature ── */
+  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap');
+
+  .signature-block {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2rem;
+    background: rgba(201,146,42,.04);
+  }
+  .sig-place-date {
+    font-size: 0.78rem;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+    font-style: italic;
+  }
+  .sig-preview {
+    min-height: 2.5rem;
+    font-family: 'Dancing Script', cursive;
+    font-size: 2rem;
+    color: var(--gold);
+    border-bottom: 1px solid rgba(155,127,90,.4);
+    margin: 0.5rem 0 1rem;
+    padding-bottom: 0.25rem;
+    letter-spacing: 0.02em;
+  }
+  .sig-legal {
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--dim);
+    margin: 0;
+  }
+  .sig-legal strong { color: var(--parch-lt); }
 
   /* ── Responsive ── */
   @media (max-width: 600px) {

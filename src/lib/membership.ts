@@ -32,6 +32,15 @@ export interface MemberData {
   erfahrung: ExperienceLevel;
   motivation: string;
   aufmerksam?: string;
+  // Media consents (opt-in)
+  streamingVideo?: boolean;
+  streamingAudio?: boolean;
+  podcast?: boolean;
+  // Community opt-ins
+  emailDigital?: boolean;
+  photoConsent?: boolean;
+  // Signature
+  unterschrift: string;
 }
 
 export interface Application {
@@ -352,6 +361,19 @@ function tplSubmissionConfirmation(app: Application): string {
       </td></tr>
     </table>
 
+    <!-- Einwilligungen Kopie -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+           style="background:rgba(155,127,90,.04);border:1px solid rgba(155,127,90,.12);margin-bottom:1.75rem;">
+      <tr><td style="padding:1rem 1.5rem;">
+        <p style="margin:0 0 .6rem;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:#9B7F5A;">Deine Einwilligungen</p>
+        <p style="margin:0 0 .3rem;font-size:.85rem;color:${d.streamingVideo ? '#8fca8f' : '#7A6A56'};">${d.streamingVideo ? '✓' : '–'}&nbsp; Streaming mit Video &amp; Audio</p>
+        <p style="margin:0 0 .3rem;font-size:.85rem;color:${d.streamingAudio ? '#8fca8f' : '#7A6A56'};">${d.streamingAudio ? '✓' : '–'}&nbsp; Streaming Audio-only</p>
+        <p style="margin:0 0 .3rem;font-size:.85rem;color:${d.podcast ? '#8fca8f' : '#7A6A56'};">${d.podcast ? '✓' : '–'}&nbsp; Podcast-Nutzung</p>
+        <p style="margin:0 0 .3rem;font-size:.85rem;color:${d.emailDigital ? '#8fca8f' : '#7A6A56'};">${d.emailDigital ? '✓' : '–'}&nbsp; Einladungen digital per E-Mail</p>
+        <p style="margin:0;font-size:.85rem;color:${d.photoConsent ? '#8fca8f' : '#7A6A56'};">${d.photoConsent ? '✓' : '–'}&nbsp; Foto-Einwilligung</p>
+      </td></tr>
+    </table>
+
     ${divider()}
 
     <!-- Mitgliedsvertrag -->
@@ -386,6 +408,11 @@ function tplSubmissionConfirmation(app: Application): string {
     </p>
 
     ${divider()}
+
+    <!-- Unterschrift -->
+    <p style="margin:0 0 .3rem;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#9B7F5A;">Digitale Unterschrift</p>
+    <p style="margin:0 0 .25rem;font-size:1.5rem;font-style:italic;color:#C9922A;font-family:Georgia,serif;">${d.unterschrift}</p>
+    <p style="margin:0 0 1.5rem;font-size:.78rem;color:#5A4E3C;">${d.ort}, ${new Date(app.createdAt).toLocaleDateString('de-DE')}</p>
 
     <p style="margin:0;font-size:.78rem;color:#5A4E3C;">
       Antrag eingegangen: ${submittedAt} &nbsp;·&nbsp; Antrags-ID: ${app.id.slice(0, 8).toUpperCase()}
@@ -444,6 +471,22 @@ function tplAdmin(app: Application, approve: string, reject: string): string {
         </td>
       </tr>
     </table>
+
+    <!-- Einwilligungen -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+           style="background:rgba(155,127,90,.04);border:1px solid rgba(155,127,90,.12);margin-bottom:1.5rem;">
+      <tr><td style="padding:1rem 1.5rem;">
+        <p style="margin:0 0 .6rem;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:#9B7F5A;">Einwilligungen</p>
+        <p style="margin:0 0 .3rem;font-size:.85rem;color:${d.streamingVideo ? '#8fca8f' : '#7A6A56'};">${d.streamingVideo ? '✓' : '–'}&nbsp; Streaming mit Video &amp; Audio</p>
+        <p style="margin:0 0 .3rem;font-size:.85rem;color:${d.streamingAudio ? '#8fca8f' : '#7A6A56'};">${d.streamingAudio ? '✓' : '–'}&nbsp; Streaming Audio-only</p>
+        <p style="margin:0 0 .3rem;font-size:.85rem;color:${d.podcast ? '#8fca8f' : '#7A6A56'};">${d.podcast ? '✓' : '–'}&nbsp; Podcast-Nutzung</p>
+        <p style="margin:0 0 .3rem;font-size:.85rem;color:${d.emailDigital ? '#8fca8f' : '#7A6A56'};">${d.emailDigital ? '✓' : '–'}&nbsp; Einladungen digital per E-Mail</p>
+        <p style="margin:0;font-size:.85rem;color:${d.photoConsent ? '#8fca8f' : '#7A6A56'};">${d.photoConsent ? '✓' : '–'}&nbsp; Foto-Einwilligung</p>
+      </td></tr>
+    </table>
+
+    <p style="margin:0 0 .3rem;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#9B7F5A;">Digitale Unterschrift</p>
+    <p style="margin:0 0 1.5rem;font-size:1.5rem;font-style:italic;color:#C9922A;font-family:Georgia,serif;">${d.unterschrift}</p>
 
     <p style="margin:0 0 1.25rem;font-size:.8rem;color:#5A4E3C;">
       Eingegangen: ${new Date(app.createdAt).toLocaleString('de-DE')} &nbsp;·&nbsp; Entscheidung innerhalb von 30 Tagen erbeten.

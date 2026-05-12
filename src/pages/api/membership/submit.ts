@@ -17,14 +17,19 @@ export const POST: APIRoute = async ({ request }) => {
 
   const {
     vorname, nachname, geburtsdatum, email, telefon,
-    strasse, plz, ort, discord, erfahrung, motivation, aufmerksam, otp,
+    strasse, plz, ort, discord, erfahrung, motivation, aufmerksam,
+    streamingVideo, streamingAudio, podcast, emailDigital, photoConsent,
+    unterschrift, otp,
   } = body;
 
   // Required field check
-  for (const [key, val] of Object.entries({ vorname, nachname, geburtsdatum, email, strasse, plz, ort, erfahrung, motivation, otp })) {
+  for (const [key, val] of Object.entries({ vorname, nachname, geburtsdatum, email, strasse, plz, ort, erfahrung, motivation, unterschrift, otp })) {
     if (!val || typeof val !== 'string' || !val.trim()) {
       return Response.json({ error: `Pflichtfeld fehlt: ${key}` }, { status: 400 });
     }
+  }
+  if (typeof unterschrift === 'string' && unterschrift.trim().length < 2) {
+    return Response.json({ error: 'Bitte trage deine Unterschrift ein.' }, { status: 400 });
   }
 
   if (!validateName(String(vorname))) {
@@ -66,10 +71,16 @@ export const POST: APIRoute = async ({ request }) => {
     strasse:    String(strasse).trim(),
     plz:        String(plz).trim(),
     ort:        String(ort).trim(),
-    discord:    discord ? String(discord).trim() : undefined,
-    erfahrung:  String(erfahrung) as MemberData['erfahrung'],
-    motivation: String(motivation).trim(),
-    aufmerksam: aufmerksam ? String(aufmerksam).trim() : undefined,
+    discord:        discord ? String(discord).trim() : undefined,
+    erfahrung:      String(erfahrung) as MemberData['erfahrung'],
+    motivation:     String(motivation).trim(),
+    aufmerksam:     aufmerksam ? String(aufmerksam).trim() : undefined,
+    streamingVideo: streamingVideo === true,
+    streamingAudio: streamingAudio === true,
+    podcast:        podcast === true,
+    emailDigital:   emailDigital === true,
+    photoConsent:   photoConsent === true,
+    unterschrift:   String(unterschrift).trim(),
   };
 
   try {
