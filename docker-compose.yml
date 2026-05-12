@@ -17,8 +17,8 @@ services:
       - SMTP_PASS=${SMTP_PASS:-}
       - SMTP_FROM=${SMTP_FROM:-kontakt@dumbdecision.de}
       - ADMIN_EMAIL=${ADMIN_EMAIL:-vorstand@dumbdecision.de}
-      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:-}
-      - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID:-}
+      - BOT_INVITE_API_URL=${BOT_INVITE_API_URL:-http://bot:8765}
+      - BOT_INVITE_API_SECRET=${BOT_INVITE_API_SECRET:-}
       - DISCORD_INVITE_URL=${DISCORD_INVITE_URL:-}
     networks:
       - web

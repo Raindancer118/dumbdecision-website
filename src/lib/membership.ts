@@ -161,30 +161,26 @@ export function updateApplicationStatus(id: string, status: 'approved' | 'reject
 // ── Discord ────────────────────────────────────────────────────────────────
 
 export async function createDiscordInvite(): Promise<string | null> {
-  const botToken = process.env.DISCORD_BOT_TOKEN;
-  const channelId = process.env.DISCORD_CHANNEL_ID;
-  if (!botToken || !channelId) return process.env.DISCORD_INVITE_URL ?? null;
+  const apiUrl    = process.env.BOT_INVITE_API_URL;
+  const apiSecret = process.env.BOT_INVITE_API_SECRET;
 
-  const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/invites`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bot ${botToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      max_age: 7 * 24 * 3600, // 7 days
-      max_uses: 1,
-      unique: true,
-    }),
-  });
-
-  if (!res.ok) {
-    console.error('Discord invite creation failed:', await res.text());
+  if (!apiUrl || !apiSecret) {
+    console.warn('BOT_INVITE_API_URL/SECRET nicht konfiguriert — kein Invite generiert.');
     return process.env.DISCORD_INVITE_URL ?? null;
   }
 
-  const json = await res.json() as { code: string };
-  return `https://discord.gg/${json.code}`;
+  const res = await fetch(`${apiUrl}/invite`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${apiSecret}` },
+  });
+
+  if (!res.ok) {
+    console.error('Invite-API Fehler:', res.status, await res.text());
+    return process.env.DISCORD_INVITE_URL ?? null;
+  }
+
+  const json = await res.json() as { url?: string };
+  return json.url ?? null;
 }
 
 // ── Mailer ─────────────────────────────────────────────────────────────────
