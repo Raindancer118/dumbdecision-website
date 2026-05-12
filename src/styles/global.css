@@ -1,0 +1,126 @@
+/* Fonts loaded via <link> in Base.astro */
+
+:root {
+  --bg:       #0C0904;
+  --bg2:      #110D07;
+  --parch:    #9B7F5A;
+  --parch-lt: #C4A07A;
+  --gold:     #C9922A;
+  --text:     #E2D8C8;
+  --dim:      #7A6A56;
+  --border:   rgba(155, 127, 90, 0.18);
+  --border-hvy: rgba(155, 127, 90, 0.35);
+
+  --nav-h: 68px;
+  --max-w: 1100px;
+  --section-px: clamp(1.5rem, 5vw, 5rem);
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+a { color: inherit; }
+
+img { display: block; max-width: 100%; }
+
+h1, h2, h3, h4 {
+  font-family: 'EB Garamond', serif;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+/* Ornament divider */
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  max-width: var(--max-w);
+  margin: 5rem auto;
+  padding: 0 var(--section-px);
+}
+.ornament-line { flex: 1; height: 1px; background: var(--border); }
+.ornament-glyph {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.3rem;
+  color: var(--parch);
+  opacity: 0.55;
+}
+
+/* Section label (eyebrow) */
+.section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--parch);
+  margin-bottom: 1.2rem;
+}
+
+/* CTA buttons */
+.btn {
+  display: inline-block;
+  padding: 0.85rem 2.8rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+  border: none;
+}
+.btn-primary {
+  border: 1px solid var(--parch);
+  color: var(--parch-lt);
+  background: transparent;
+}
+.btn-primary:hover { background: rgba(155, 127, 90, 0.12); }
+.btn-ghost {
+  border: 1px solid var(--border);
+  color: var(--dim);
+  background: transparent;
+}
+.btn-ghost:hover { border-color: var(--parch); color: var(--parch-lt); }
+
+/* Inline text link */
+.text-link {
+  color: var(--parch);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(155, 127, 90, 0.3);
+  padding-bottom: 0.15rem;
+  transition: border-color 0.25s;
+}
+.text-link:hover { border-color: var(--parch); }
+
+@media (max-width: 640px) {
+  .ornament { margin: 3rem auto; }
+  .btn { padding: 0.85rem 2rem; }
+}

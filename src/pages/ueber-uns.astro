@@ -1,0 +1,308 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const team = [
+  { name: 'Tom',    role: 'Dungeon Master · 1. Vorsitzender', character: '', isBoard: true },
+  { name: 'Dominik', role: 'Vorstand',                        character: '', isBoard: true },
+  { name: 'Tobi',   role: 'Vorstand',                         character: '', isBoard: true },
+  { name: 'Thies',  role: 'Mitglied',                         character: '', isBoard: false },
+  { name: 'Alex',   role: 'Mitglied',                         character: '', isBoard: false },
+  { name: 'David',  role: 'Spieler',                          character: '', isBoard: false },
+];
+
+const systems = [
+  {
+    name: 'Dungeons & Dragons 5.5E',
+    short: 'D&D 5.5E',
+    desc: 'Das meistgespielte Pen-&-Paper-Rollenspiel der Welt, in seiner aktuellsten Edition. Klassisches Dungeoneering, epische Schlachten, komplexe Charakterentwicklung.',
+  },
+  {
+    name: 'Daggerheart',
+    short: 'by Critical Role',
+    desc: 'Das narrative Rollenspielsystem von Critical Role — gemacht für cineastisches Erzählen, emotionale Tiefe und kooperatives Spielen. Anders gedacht, neu erlebt.',
+  },
+];
+---
+
+<Base title="Über Uns" description="Lerne Dumb Decision TTRPG kennen — unsere Geschichte, unser Team und unsere Vision für eine lebendige TTRPG-Gemeinschaft.">
+  <Nav />
+
+  <PageHeader
+    label="Über Uns"
+    title="Wer wir sind."
+    subtitle="Ein Verein, der aus einer Runde Freunde entstand."
+    ghost="Über Uns"
+  />
+
+  <!-- GESCHICHTE -->
+  <section class="geschichte">
+    <div class="geschichte-inner">
+      <div class="geschichte-text">
+        <div class="section-label">Unsere Geschichte</div>
+        <h2>Wie alles begann.</h2>
+        <p>
+          Dumb Decision TTRPG entstand 2025 aus einer Gruppe von Freunden,
+          die sich fest vorgenommen hatte, einmal die Woche für D&amp;D zusammenzukommen.
+          Was simpel klingt, wurde für uns zu weit mehr als einem Hobby.
+        </p>
+        <p>
+          TTRPGs haben uns Halt gegeben — besonders in Zeiten, in denen es dem einen
+          oder anderen nicht so gut ging. Die Regelmäßigkeit der Sessions,
+          der gemeinsame Tisch, die geteilten Geschichten: das alles hat eine echte
+          Gemeinschaft entstehen lassen, die trägt.
+        </p>
+        <p>
+          Genau das wollen wir weitergeben. Wir haben Dumb Decision TTRPG mit dem Ziel
+          gegründet, auch anderen diese Stabilität, die Freude und das Zugehörigkeitsgefühl
+          zu bieten — offen für alle, die mitspielen wollen.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-year">2025</div>
+            <h3>Die Gründung</h3>
+            <p>Aus einer Runde Freunde wird ein Verein — mit gemeinsamer Vision und einer noch leeren Welt namens Caerathis.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot active"></div>
+          <div class="timeline-content">
+            <div class="timeline-year">Jetzt</div>
+            <h3>Campaign IV</h3>
+            <p>Unsere aktive Kampagne in Caerathis läuft. Die Welt wächst mit jeder Session.</p>
+          </div>
+        </div>
+        <div class="timeline-item future">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-year">Bald</div>
+            <h3>e.V. Eintragung</h3>
+            <p>Die Vereinseintragung ist in Planung — ein weiterer Schritt auf dem Weg zur offiziellen Gemeinschaft.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ornament">
+    <div class="ornament-line"></div>
+    <div class="ornament-glyph">✦</div>
+    <div class="ornament-line"></div>
+  </div>
+
+  <!-- TEAM -->
+  <section class="team">
+    <div class="team-inner">
+      <div class="section-label">Das Team</div>
+      <h2>Die Köpfe hinter Caerathis.</h2>
+      <p class="team-intro">
+        Nicht jeder Spieler ist auch Vereinsmitglied — aber alle sind Teil unserer Geschichte.
+        Charakternamen folgen, sobald Campaign IV weitere Kapitel schreibt.
+      </p>
+
+      <div class="team-grid">
+        {team.map(member => (
+          <div class="team-card" class:list={[{ 'team-card--board': member.isBoard }]}>
+            <div class="team-avatar">
+              {member.name.charAt(0)}
+            </div>
+            <div class="team-info">
+              <h3>{member.name}</h3>
+              <span class="team-role">{member.role}</span>
+              {member.character && (
+                <span class="team-character">Spielt: {member.character}</span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <div class="ornament">
+    <div class="ornament-line"></div>
+    <div class="ornament-glyph">✦</div>
+    <div class="ornament-line"></div>
+  </div>
+
+  <!-- SYSTEME -->
+  <section class="systeme">
+    <div class="systeme-inner">
+      <div class="section-label">Was wir spielen</div>
+      <h2>Unsere Systeme.</h2>
+      <div class="system-grid">
+        {systems.map(s => (
+          <div class="system-card">
+            <div class="system-header">
+              <h3>{s.name}</h3>
+              <span class="system-sub">{s.short}</span>
+            </div>
+            <p>{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECT MYSTERIA -->
+  <section class="mysteria" id="mysteria">
+    <div class="mysteria-inner">
+      <div class="section-label">Die große Vision</div>
+      <h2>Project Mysteria</h2>
+      <div class="mysteria-body">
+        <p>
+          Project Mysteria ist unsere langfristige Vision für Dumb Decision TTRPG:
+          ein lebendiges Netzwerk aus Kampagnen, Dungeon Mastern und Spielergruppen —
+          alle miteinander verbunden durch die gemeinsame Welt von Caerathis.
+        </p>
+        <p>
+          Was eine Gruppe in ihrer Kampagne erlebt, hinterlässt echte Spuren.
+          Städte, die fallen. Helden, die Legenden werden. Entscheidungen,
+          die die Welt für alle anderen Gruppen verändern.
+        </p>
+        <p>
+          Verschiedene Altersgruppen, verschiedene Spielstile, verschiedene Geschichten —
+          eine lebendige, dynamische Welt als gemeinsames Zuhause.
+        </p>
+      </div>
+      <a href="/caerathis" class="text-link">Mehr über Caerathis →</a>
+    </div>
+  </section>
+
+  <Footer />
+</Base>
+
+<style>
+
+  /* ── GESCHICHTE ── */
+  .geschichte { padding: 7rem var(--section-px); }
+  .geschichte-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: start;
+  }
+  .geschichte h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 1.5rem; }
+  .geschichte-text p {
+    font-size: 0.9rem; color: var(--dim); line-height: 1.85; margin-bottom: 1.2rem;
+  }
+
+  /* Timeline */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item {
+    display: grid; grid-template-columns: 24px 1fr; gap: 1.5rem;
+    position: relative;
+  }
+  .timeline-item:not(:last-child) .timeline-dot::after {
+    content: '';
+    position: absolute; top: 24px; left: 11px;
+    width: 1px; height: calc(100% + 0px);
+    background: var(--border);
+  }
+  .timeline-dot {
+    width: 12px; height: 12px;
+    border: 1px solid var(--parch);
+    border-radius: 50%;
+    margin-top: 0.3rem;
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.25s;
+  }
+  .timeline-dot.active { background: var(--parch); }
+  .timeline-item.future .timeline-dot { border-color: var(--dim); opacity: 0.4; }
+  .timeline-content { padding-bottom: 2.5rem; }
+  .timeline-year {
+    font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--parch); margin-bottom: 0.4rem;
+  }
+  .timeline-content h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .timeline-content p { font-size: 0.85rem; color: var(--dim); line-height: 1.7; }
+  .timeline-item.future .timeline-content { opacity: 0.45; }
+
+  /* ── TEAM ── */
+  .team { padding: 0 var(--section-px) 7rem; }
+  .team-inner { max-width: var(--max-w); margin: 0 auto; }
+  .team h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 1rem; }
+  .team-intro { font-size: 0.9rem; color: var(--dim); max-width: 540px; line-height: 1.8; margin-bottom: 3rem; }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2px;
+  }
+
+  .team-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    padding: 2rem; display: flex; gap: 1.5rem; align-items: flex-start;
+    transition: border-color 0.25s;
+  }
+  .team-card:hover { border-color: rgba(155,127,90,0.38); }
+  .team-card--board { border-color: rgba(155,127,90,0.25); }
+
+  .team-avatar {
+    width: 44px; height: 44px; flex-shrink: 0;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'EB Garamond', serif; font-size: 1.2rem;
+    color: var(--parch-lt); background: var(--bg);
+  }
+  .team-card--board .team-avatar { border-color: var(--parch); }
+
+  .team-info h3 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+  .team-role {
+    display: block; font-size: 0.72rem; letter-spacing: 0.08em;
+    color: var(--dim); text-transform: uppercase; margin-bottom: 0.3rem;
+  }
+  .team-character {
+    display: block; font-family: 'EB Garamond', serif; font-style: italic;
+    font-size: 0.9rem; color: var(--parch);
+  }
+
+  /* ── SYSTEME ── */
+  .systeme { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 7rem var(--section-px); }
+  .systeme-inner { max-width: var(--max-w); margin: 0 auto; }
+  .systeme h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 3rem; }
+  .system-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .system-card {
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 2.5rem; transition: border-color 0.25s;
+  }
+  .system-card:hover { border-color: rgba(155,127,90,0.38); }
+  .system-header { margin-bottom: 1.25rem; }
+  .system-card h3 { font-size: 1.4rem; margin-bottom: 0.3rem; }
+  .system-sub {
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--parch); display: block;
+  }
+  .system-card p { font-size: 0.9rem; color: var(--dim); line-height: 1.8; }
+
+  /* ── PROJECT MYSTERIA ── */
+  .mysteria { padding: 7rem var(--section-px); }
+  .mysteria-inner { max-width: 680px; margin: 0 auto; }
+  .mysteria h2 { font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 2rem; }
+  .mysteria-body p {
+    font-size: 0.92rem; color: var(--dim); line-height: 1.85; margin-bottom: 1.25rem;
+  }
+  .mysteria .text-link { display: inline-block; margin-top: 1rem; }
+
+  @media (max-width: 860px) {
+    .geschichte-inner { grid-template-columns: 1fr; gap: 4rem; }
+    .system-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .geschichte { padding: 5rem var(--section-px); }
+    .geschichte-inner { gap: 3rem; }
+    .team { padding-bottom: 5rem; }
+    .team-grid { grid-template-columns: 1fr; }
+    .team-card { padding: 1.5rem; }
+    .systeme { padding: 5rem var(--section-px); }
+    .system-card { padding: 1.75rem; }
+    .mysteria { padding: 5rem var(--section-px); }
+    .timeline-content { padding-bottom: 2rem; }
+  }
+</style>

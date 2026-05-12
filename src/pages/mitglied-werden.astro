@@ -1,0 +1,624 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+
+<Base
+  title="Mitglied werden"
+  description="Werde Teil von Dumb Decision TTRPG — füll die Vereinsanmeldung aus und tritt unserer Community bei."
+>
+  <Nav />
+
+  <PageHeader
+    label="Mitglied werden"
+    title="Dein Platz am Tisch."
+    subtitle="Füll das Formular aus und werde Teil von Dumb Decision TTRPG. Wir melden uns, sobald der Vorstand deinen Antrag geprüft hat."
+    ghost="Beitritt"
+  />
+
+  <section class="membership-section">
+    <div class="membership-inner">
+
+      <!-- ── FORM (shown by default) ── -->
+      <div id="formWrap">
+
+        <div class="form-preamble">
+          <p class="preamble-text">
+            Die Anmeldung ist verbindlich und richtet sich an Personen ab&nbsp;16&nbsp;Jahren.
+            Nach Eingang deiner Anfrage erhältst du innerhalb weniger Tage eine Rückmeldung vom Vorstand.
+          </p>
+        </div>
+
+        <form id="membershipForm" novalidate>
+
+          <!-- ── 1. Persönliche Daten ── -->
+          <div class="form-section">
+            <div class="section-label">Persönliche Daten</div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="vorname">Vorname <span class="req">*</span></label>
+                <input type="text" id="vorname" name="vorname" autocomplete="given-name"
+                  placeholder="Vorname" required />
+                <span class="field-hint" id="vorname-hint"></span>
+              </div>
+              <div class="field">
+                <label for="nachname">Nachname <span class="req">*</span></label>
+                <input type="text" id="nachname" name="nachname" autocomplete="family-name"
+                  placeholder="Nachname" required />
+                <span class="field-hint" id="nachname-hint"></span>
+              </div>
+            </div>
+
+            <div class="field field--narrow">
+              <label for="geburtsdatum">Geburtsdatum <span class="req">*</span></label>
+              <input type="date" id="geburtsdatum" name="geburtsdatum"
+                autocomplete="bday" required />
+            </div>
+
+            <div class="field">
+              <label for="strasse">Straße &amp; Hausnummer <span class="req">*</span></label>
+              <input type="text" id="strasse" name="strasse" autocomplete="street-address"
+                placeholder="Musterstraße 42" required />
+            </div>
+
+            <div class="field-row">
+              <div class="field field--plz">
+                <label for="plz">PLZ <span class="req">*</span></label>
+                <input type="text" id="plz" name="plz" autocomplete="postal-code"
+                  placeholder="20095" pattern="\d{5}" maxlength="5" required />
+              </div>
+              <div class="field">
+                <label for="ort">Ort <span class="req">*</span></label>
+                <input type="text" id="ort" name="ort" autocomplete="address-level2"
+                  placeholder="Hamburg" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="ornament" aria-hidden="true">
+            <div class="ornament-line"></div>
+            <div class="ornament-glyph">✦</div>
+            <div class="ornament-line"></div>
+          </div>
+
+          <!-- ── 2. Kontakt & Community ── -->
+          <div class="form-section">
+            <div class="section-label">Kontakt &amp; Community</div>
+
+            <!-- Email + OTP -->
+            <div class="field">
+              <label for="email">E-Mail-Adresse <span class="req">*</span></label>
+              <div class="email-row">
+                <input type="email" id="email" name="email" autocomplete="email"
+                  placeholder="deine@email.de" required />
+                <button type="button" id="sendOtpBtn" class="btn btn-ghost btn-otp">
+                  Code senden
+                </button>
+              </div>
+            </div>
+
+            <div class="field otp-field" id="otpField" hidden>
+              <label for="otp">Bestätigungscode <span class="req">*</span></label>
+              <div class="otp-row">
+                <input type="text" id="otp" name="otp" inputmode="numeric"
+                  pattern="\d{6}" maxlength="6" placeholder="_ _ _ _ _ _"
+                  autocomplete="one-time-code" />
+                <span class="otp-status" id="otpStatus" aria-live="polite"></span>
+              </div>
+              <span class="field-hint dim" id="otpHint">
+                Kein Code erhalten?
+                <button type="button" id="resendOtpBtn" class="link-btn">Erneut senden</button>
+              </span>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="telefon">Telefon <span class="opt">(optional)</span></label>
+                <input type="tel" id="telefon" name="telefon" autocomplete="tel"
+                  placeholder="+49 40 000000" />
+              </div>
+              <div class="field">
+                <label for="discord">Discord-Username <span class="opt">(optional)</span></label>
+                <input type="text" id="discord" name="discord"
+                  placeholder="username" autocomplete="off" />
+              </div>
+            </div>
+          </div>
+
+          <div class="ornament" aria-hidden="true">
+            <div class="ornament-line"></div>
+            <div class="ornament-glyph">✦</div>
+            <div class="ornament-line"></div>
+          </div>
+
+          <!-- ── 3. Über dich ── -->
+          <div class="form-section">
+            <div class="section-label">Über dich</div>
+
+            <div class="field field--narrow">
+              <label for="erfahrung">TTRPG-Erfahrung <span class="req">*</span></label>
+              <div class="select-wrap">
+                <select id="erfahrung" name="erfahrung" required>
+                  <option value="" disabled selected>Bitte auswählen …</option>
+                  <option value="anfaenger">Anfänger — noch keine Erfahrung</option>
+                  <option value="gelegenheit">Gelegenheitsspieler — ein paar Sessions</option>
+                  <option value="erfahren">Erfahren — mehrere Kampagnen gespielt</option>
+                  <option value="veteran">Veteran — langjährige TTRPG-Erfahrung</option>
+                </select>
+                <span class="select-arrow" aria-hidden="true">↓</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="aufmerksam">Wie bist du auf uns aufmerksam geworden? <span class="opt">(optional)</span></label>
+              <input type="text" id="aufmerksam" name="aufmerksam"
+                placeholder="z.B. YouTube, Empfehlung, Social Media …" />
+            </div>
+
+            <div class="field">
+              <label for="motivation">Warum möchtest du Mitglied werden? <span class="req">*</span></label>
+              <textarea id="motivation" name="motivation" rows="5"
+                placeholder="Erzähl uns ein bisschen über dich und deine Motivation …"
+                required></textarea>
+            </div>
+          </div>
+
+          <div class="ornament" aria-hidden="true">
+            <div class="ornament-line"></div>
+            <div class="ornament-glyph">✦</div>
+            <div class="ornament-line"></div>
+          </div>
+
+          <!-- ── 4. Bestätigung ── -->
+          <div class="form-section form-section--submit">
+
+            <label class="consent-label" for="consent">
+              <input type="checkbox" id="consent" name="consent" required />
+              <span class="consent-text">
+                Ich stimme der
+                <a href="/satzung" class="text-link" target="_blank" rel="noopener">Vereinssatzung</a>
+                und der
+                <a href="/datenschutz" class="text-link" target="_blank" rel="noopener">Datenschutzerklärung</a>
+                zu und erkläre mich mit der Verarbeitung meiner Daten für Vereinszwecke einverstanden.
+              </span>
+            </label>
+
+            <div id="formError" class="form-notice form-notice--err" hidden></div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary btn-submit" disabled>
+              Anmeldung absenden
+            </button>
+
+            <p class="submit-note">
+              * Pflichtfeld — deine Anmeldung wird dem Vorstand zur Prüfung vorgelegt.
+            </p>
+          </div>
+
+        </form>
+      </div><!-- /formWrap -->
+
+      <!-- ── SUCCESS STATE ── -->
+      <div id="successWrap" hidden>
+        <div class="success-card">
+          <div class="success-glyph" aria-hidden="true">✦</div>
+          <div class="section-label">Anmeldung eingegangen</div>
+          <h2>Willkommen an Bord.</h2>
+          <p>
+            Deine Vereinsanmeldung wurde erfolgreich übermittelt. Der Vorstand wird sie in den nächsten Tagen prüfen
+            und sich per E-Mail bei dir melden.
+          </p>
+          <p class="success-hint">
+            Schau gerne auch schon mal in unserem
+            <a href="/kontakt" class="text-link">Kontaktbereich</a> vorbei —
+            sobald du aufgenommen wurdest, erhältst du deinen persönlichen Discord-Einladungslink.
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /membership-inner -->
+  </section>
+
+  <Footer />
+</Base>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  let otpSent        = false;
+  let emailForOtp    = '';
+
+  // ── Elements ───────────────────────────────────────────────────────────────
+  const form        = document.getElementById('membershipForm') as HTMLFormElement;
+  const sendBtn     = document.getElementById('sendOtpBtn')    as HTMLButtonElement;
+  const resendBtn   = document.getElementById('resendOtpBtn')  as HTMLButtonElement;
+  const otpField    = document.getElementById('otpField')      as HTMLDivElement;
+  const otpInput    = document.getElementById('otp')           as HTMLInputElement;
+  const otpStatus   = document.getElementById('otpStatus')     as HTMLSpanElement;
+  const emailInput  = document.getElementById('email')         as HTMLInputElement;
+  const submitBtn   = document.getElementById('submitBtn')     as HTMLButtonElement;
+  const formError   = document.getElementById('formError')     as HTMLDivElement;
+  const consentBox  = document.getElementById('consent')       as HTMLInputElement;
+  const formWrap    = document.getElementById('formWrap')      as HTMLDivElement;
+  const successWrap = document.getElementById('successWrap')   as HTMLDivElement;
+
+  // ── Name sanity check ──────────────────────────────────────────────────────
+  const NAME_RE = /^[\p{L}\p{M}][\p{L}\p{M} '\-]*[\p{L}\p{M}]$|^[\p{L}\p{M}]{2}$/u;
+
+  function checkName(id: string, hintId: string) {
+    const input = document.getElementById(id) as HTMLInputElement;
+    const hint  = document.getElementById(hintId) as HTMLSpanElement;
+    input.addEventListener('blur', () => {
+      const val = input.value.trim();
+      if (!val) { hint.textContent = ''; return; }
+      if (!NAME_RE.test(val) || val.length < 2) {
+        hint.textContent = 'Bitte gib deinen echten Namen ein.';
+        hint.className = 'field-hint err';
+      } else {
+        hint.textContent = '';
+        hint.className = 'field-hint';
+      }
+    });
+  }
+  checkName('vorname', 'vorname-hint');
+  checkName('nachname', 'nachname-hint');
+
+  // ── OTP submit-button gating ────────────────────────────────────────────────
+  function updateSubmit() {
+    const ready = otpSent && otpInput.value.trim().length === 6 && consentBox.checked;
+    submitBtn.disabled = !ready;
+  }
+
+  otpInput.addEventListener('input', updateSubmit);
+  consentBox.addEventListener('change', updateSubmit);
+
+  // Re-enable OTP send if email changes
+  emailInput.addEventListener('input', () => {
+    if (otpSent && emailInput.value.trim().toLowerCase() !== emailForOtp) {
+      otpSent = false;
+      otpField.hidden = true;
+      sendBtn.textContent = 'Code senden';
+      sendBtn.disabled = false;
+      updateSubmit();
+    }
+  });
+
+  // ── Send OTP ───────────────────────────────────────────────────────────────
+  async function doSendOtp() {
+    const email = emailInput.value.trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailInput.focus();
+      return;
+    }
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sende …';
+
+    const res = await fetch('/api/membership/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    if (res.ok) {
+      emailForOtp = email;
+      otpSent = true;
+      otpField.hidden = false;
+      otpInput.value = '';
+      sendBtn.textContent = 'Erneut senden';
+      sendBtn.disabled = false;
+      otpStatus.textContent = '';
+      otpInput.focus();
+    } else {
+      const data = await res.json() as { error?: string };
+      sendBtn.textContent = 'Code senden';
+      sendBtn.disabled = false;
+      otpStatus.textContent = data.error ?? 'Fehler beim Senden.';
+      otpStatus.className = 'otp-status err';
+    }
+  }
+
+  sendBtn.addEventListener('click', doSendOtp);
+  resendBtn.addEventListener('click', doSendOtp);
+
+  // ── Show / hide error ───────────────────────────────────────────────────────
+  function showError(msg: string) {
+    formError.textContent = msg;
+    formError.hidden = false;
+    formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  function clearError() {
+    formError.hidden = true;
+    formError.textContent = '';
+  }
+
+  // ── Form submit ─────────────────────────────────────────────────────────────
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird gesendet …';
+
+    const payload = {
+      vorname:     (document.getElementById('vorname')    as HTMLInputElement).value.trim(),
+      nachname:    (document.getElementById('nachname')   as HTMLInputElement).value.trim(),
+      geburtsdatum:(document.getElementById('geburtsdatum') as HTMLInputElement).value,
+      email:       emailInput.value.trim().toLowerCase(),
+      telefon:     (document.getElementById('telefon')   as HTMLInputElement).value.trim() || undefined,
+      strasse:     (document.getElementById('strasse')   as HTMLInputElement).value.trim(),
+      plz:         (document.getElementById('plz')       as HTMLInputElement).value.trim(),
+      ort:         (document.getElementById('ort')       as HTMLInputElement).value.trim(),
+      discord:     (document.getElementById('discord')   as HTMLInputElement).value.trim() || undefined,
+      erfahrung:   (document.getElementById('erfahrung') as HTMLSelectElement).value,
+      aufmerksam:  (document.getElementById('aufmerksam') as HTMLInputElement).value.trim() || undefined,
+      motivation:  (document.getElementById('motivation') as HTMLTextAreaElement).value.trim(),
+      otp:         otpInput.value.trim(),
+    };
+
+    const res = await fetch('/api/membership/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      formWrap.hidden = true;
+      successWrap.hidden = false;
+      successWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      const data = await res.json() as { error?: string };
+      showError(data.error ?? 'Ein Fehler ist aufgetreten. Bitte versuch es erneut.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Anmeldung absenden';
+    }
+  });
+</script>
+
+<style>
+  .membership-section {
+    padding: 6rem var(--section-px) 9rem;
+  }
+  .membership-inner {
+    max-width: 660px;
+    margin: 0 auto;
+  }
+
+  /* ── Preamble ── */
+  .form-preamble {
+    margin-bottom: 3.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .preamble-text {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--dim);
+    line-height: 1.8;
+  }
+
+  /* ── Form sections ── */
+  .form-section {
+    margin-bottom: 0;
+  }
+  .form-section .section-label {
+    margin-bottom: 2rem;
+  }
+
+  /* ── Fields ── */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .field--narrow { max-width: 300px; }
+  .field--plz    { max-width: 120px; }
+
+  label {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--parch);
+  }
+  .req { color: var(--gold); font-style: normal; }
+  .opt { color: var(--dim); font-size: 0.65rem; letter-spacing: 0.1em; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select,
+  textarea {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    padding: 0.85rem 1.2rem;
+    width: 100%;
+    transition: border-color 0.25s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input::placeholder,
+  textarea::placeholder { color: var(--dim); opacity: 0.45; }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--parch);
+  }
+  textarea { resize: vertical; min-height: 130px; }
+
+  /* date input fix */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.5) sepia(0.4) saturate(2);
+    cursor: pointer;
+  }
+
+  /* ── Select ── */
+  .select-wrap {
+    position: relative;
+  }
+  .select-arrow {
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--dim);
+    pointer-events: none;
+    font-size: 0.8rem;
+  }
+
+  /* ── Email + OTP row ── */
+  .email-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+  .email-row input { flex: 1; }
+  .btn-otp {
+    white-space: nowrap;
+    padding: 0 1.25rem;
+    font-size: 0.67rem;
+    flex-shrink: 0;
+  }
+
+  .otp-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .otp-row input {
+    max-width: 180px;
+    letter-spacing: 0.35em;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  .otp-status {
+    font-size: 0.8rem;
+  }
+  .otp-status.err { color: #C08080; }
+
+  /* ── Field hint ── */
+  .field-hint {
+    font-size: 0.78rem;
+    color: var(--dim);
+    min-height: 1em;
+  }
+  .field-hint.err { color: #C08080; }
+  .field-hint.dim { color: var(--dim); }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--parch);
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .link-btn:hover { color: var(--parch-lt); }
+
+  /* ── Consent ── */
+  .consent-label {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1rem;
+    color: var(--text);
+  }
+  .consent-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    accent-color: var(--parch);
+    margin-top: 0.15rem;
+    cursor: pointer;
+    padding: 0;
+  }
+  .consent-text {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--dim);
+  }
+
+  /* ── Notices ── */
+  .form-notice {
+    padding: 1rem 1.5rem;
+    border: 1px solid;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .form-notice--err { border-color: rgba(180,60,60,.4); color: #C08080; background: rgba(180,60,60,.07); }
+
+  /* ── Submit ── */
+  .form-section--submit { padding-top: 0; }
+  .btn-submit {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+  }
+  .btn-submit:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+  .submit-note {
+    font-size: 0.75rem;
+    color: var(--dim);
+    margin-top: 1.25rem;
+    text-align: center;
+  }
+
+  /* ── Success ── */
+  .success-card {
+    padding: 4rem 0;
+    max-width: 520px;
+  }
+  .success-glyph {
+    font-family: 'EB Garamond', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+  }
+  .success-card h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 1.25rem;
+  }
+  .success-card p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--dim);
+    margin-bottom: 1rem;
+  }
+  .success-hint { font-style: italic; }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .field-row { grid-template-columns: 1fr; gap: 0; }
+    .field--plz { max-width: 100%; }
+    .field--narrow { max-width: 100%; }
+    .email-row { flex-direction: column; }
+    .btn-otp { width: 100%; text-align: center; }
+    .otp-row input { max-width: 100%; }
+  }
+</style>

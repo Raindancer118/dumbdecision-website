@@ -1,0 +1,28 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3025:4321"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - HOST=0.0.0.0
+      - PORT=4321
+      - DATA_DIR=/app/data
+      - SITE_URL=${SITE_URL:-https://dumbdecision.de}
+      - SMTP_HOST=${SMTP_HOST:-mx.volantic.de}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-kontakt@dumbdecision.de}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - SMTP_FROM=${SMTP_FROM:-kontakt@dumbdecision.de}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-vorstand@dumbdecision.de}
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:-}
+      - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID:-}
+      - DISCORD_INVITE_URL=${DISCORD_INVITE_URL:-}
+    networks:
+      - web
+
+networks:
+  web:
+    external: true

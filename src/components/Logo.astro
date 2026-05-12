@@ -1,0 +1,119 @@
+---
+export interface Props {
+  variant?: 'color' | 'white' | 'black';
+  size?: number;
+  class?: string;
+  alt?: string;
+}
+
+const {
+  variant = 'color',
+  size = 175,
+  class: className = '',
+  alt = 'Dumb Decision TTRPG Logo',
+} = Astro.props;
+
+const lqip: Record<string, string> = {
+  color: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAB9UlEQVQ4y2WUUdLcIAyDPxmyd+oleo3e/3UTUB9sIH+7s0w2OyBLsoz+/P4lIGwHuGHWs4EbEAYwABM8gGEYwMBM8ASmgY4U2A3RsDpyx/R6b+AQyAKMQQP8AA9w1/PJeswuaIYudFm+MBdSw44EJYAAhDAwMY/ga1CSl8EG1JMlH8wH+CD1BJOEZRTgkNdhjKQ8zzJjgibgDlzAhfjIusANSblvkTp6BbYRIjBLRSM9nR1oJTt9hBCoQA6brGHbTlRVPUtSlHz1Kq/Fvn5IuT9KU+1ZyKk8yUv1ZyzACbhMmQfsNEOH5QIKpFmRClHyEzBzVSuUFoi1MRcWUtloGRm/ut4sAhQ9gTwqtKt1KrkBTrnbDadmbS+mRZPVDNEr5UMpd3VDdaQmxCcgxZhj6gQNlM3sBTSrbwZQguy8+GSO1UShcEVmWWMUvZrhQ+PQMp4p1RkZpCU8FUhSNoZqf3+B1XLJcFqe/LZ/GGUONttTo7r8Gp9aznfbr/wte/fw/FRVjscLbGAG5jF+7F3gh4HF1K/sDpRjJ5h9s8n43GRI16dV+XjxOPmDR+KpDD/A7D4T8iwh9XV53JTA4c1WrqjdwBf4ogLcks14pS2zBVfeSGr/3YkwLN1agPAIRsd7PMY/Ha/A6yrpIe0rYRW8gbvYPYj5F3WVRjGjEAiHAAAAAElFTkSuQmCC',
+  white: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAA5FBMVEX+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+/v/+/v/+/v/+/v/+///+///+/v/+/v/+/v/+///+/v/+///+///+/v/+/v/+/v/+///+///+/v/+/v/+///+/v/+/v/+///+/v/+/v/+/v/+/v/+/v/+/v/+/v/+/v/+/v8d3X3mAAAATHRSTlMAAQMFCAoNEBMVBwYJERgbHR4aFhIPFBkcISMlJh8EAiAiJCgpCyoOJysXKiwtLi4tKTAxMDIzMSYrLzIMFh4sDBUvCxQdJRsjKAUDc8suzAAAAWJJREFUGNMlz2tzmkAYBeCX2woCchdwWZTdlVuMS5CKVhtS2yZt+v//T4fp12fOmTMHJFlRNbTQDcPQF0hbKrIkgWxayDZWjut5rh+EyFJkCUwtWseJl25whjck1pGab0FbBMmu2NCMcc4oicO9KUNkJCnFGGeMlwynjlGpOYQrQrO6zmrGeY3TJFhYCugxoRljnJdNyWiatPbeBHvlFZg9HZ6Poiuzwot1tITKcHb45XDs+9MgyrkfWbAPY4Kfjv3py/k8ihLP+2BFLblcv/an23lWvknWd1iib6+X67EfxtvtfBumzAsqMN++v16uz+IxzDx2bNdWoPz4+ev95dB1QjyGcRRs10agaOHH7z9lM02dGMbhfzJXoxWhjDczDo8Ju8YdZPOu+4TWvJnEQ0ws9W0NtrmK9Hh+VTZNWRfOGqkgbRX1bgcOKSimBfHXlfUJIG3z5T7SV47rJn4bIuvz7z+rHjCseNO4sAAAAABJRU5ErkJggg==',
+  black: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAMAAAC6V+0/AAAA5FBMVEX+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+///+/v/+/v/+/v/+/v/+///+///+/v/+/v/+/v/+///+/v/+///+///+/v/+/v/+/v/+///+///+/v/+/v/+///+/v/+/v/+///+/v/+/v/+/v/+/v/+/v/+/v/+/v/+/v/+/v8d3X3mAAAATHRSTlMAAQMFCAoNEBMVBwYJERgbHR4aFhIPFBkcISMlJh8EAiAiJCgpCyoOJysXKiwtLi4tKTAxMDIzMSYrLzIMFh4sDBUvCxQdJRsjKAUDc8suzAAAAWJJREFUGNMlz2tzmkAYBeCX2woCchdwWZTdlVuMS5CKVhtS2yZt+v//T4fp12fOmTMHJFlRNbTQDcPQF0hbKrIkgWxayDZWjut5rh+EyFJkCUwtWseJl25whjck1pGab0FbBMmu2NCMcc4oicO9KUNkJCnFGGeMlwynjlGpOYQrQrO6zmrGeY3TJFhYCugxoRljnJdNyWiatPbeBHvlFZg9HZ6Poiuzwot1tITKcHb45XDs+9MgyrkfWbAPY4Kfjv3py/k8ihLP+2BFLblcv/an23lWvknWd1iib6+X67EfxtvtfBumzAsqMN++v16uz+IxzDx2bNdWoPz4+ev95dB1QjyGcRRs10agaOHH7z9lM02dGMbhfzJXoxWhjDczDo8Ju8YdZPOu+4TWvJnEQ0ws9W0NtrmK9Hh+VTZNWRfOGqkgbRX1bgcOKSimBfHXlfUJIG3z5T7SV47rJn4bIuvz7z+rHjCseNO4sAAAAABJRU5ErkJggg==',
+};
+
+const realSrc: Record<string, string> = {
+  color: '/logo-color.webp',
+  white: '/logo-white.webp',
+  black: '/logo-black.webp',
+};
+const fallbackSrc: Record<string, string> = {
+  color: '/logo-color-opt.png',
+  white: '/logo-white-opt.png',
+  black: '/logo-black-opt.png',
+};
+
+const id = `logo-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class:list={['logo-wrap', className]} style={`width:${size}px;height:${size}px`} id={id}>
+  <!-- LQIP placeholder — blurred, shown immediately -->
+  <img
+    class="logo-lqip"
+    src={lqip[variant]}
+    aria-hidden="true"
+    width={size}
+    height={size}
+    alt=""
+  />
+  <!-- Real image — fades in once loaded -->
+  <picture class="logo-real">
+    <source srcset={realSrc[variant]} type="image/webp" />
+    <img
+      src={fallbackSrc[variant]}
+      alt={alt}
+      width={size}
+      height={size}
+      fetchpriority="high"
+      decoding="async"
+    />
+  </picture>
+</div>
+
+<script define:vars={{ id }}>
+  const wrap = document.getElementById(id);
+  if (wrap) {
+    const real = wrap.querySelector('.logo-real img');
+    const lqip = wrap.querySelector('.logo-lqip');
+    if (real && real instanceof HTMLImageElement) {
+      const reveal = () => {
+        wrap.classList.add('loaded');
+      };
+      if (real.complete) {
+        reveal();
+      } else {
+        real.addEventListener('load', reveal, { once: true });
+      }
+    }
+  }
+</script>
+
+<style>
+  .logo-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .logo-lqip,
+  .logo-real {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .logo-lqip {
+    object-fit: contain;
+    filter: blur(8px);
+    transform: scale(1.05);
+    transition: opacity 0.4s ease;
+    z-index: 1;
+  }
+
+  .logo-real {
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .logo-real img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* When loaded: real fades in, lqip fades out */
+  .logo-wrap.loaded .logo-real {
+    opacity: 1;
+  }
+  .logo-wrap.loaded .logo-lqip {
+    opacity: 0;
+  }
+</style>

@@ -1,0 +1,204 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const sent    = Astro.url.searchParams.get('sent')    === '1';
+const error   = Astro.url.searchParams.get('error')   === '1';
+---
+
+<Base title="Kontakt" description="Schreib uns — per Kontaktformular, Discord oder E-Mail. Wir freuen uns von dir zu hören.">
+  <Nav />
+
+  <PageHeader
+    label="Kontakt"
+    title="Meld dich."
+    subtitle="Fragen, Interesse am Verein, oder einfach Hallo — wir freuen uns von dir zu hören."
+    ghost="Kontakt"
+  />
+
+  <section class="kontakt-section">
+    <div class="kontakt-inner">
+
+      <!-- LEFT: Form -->
+      <div class="form-col">
+        <div class="section-label">Nachricht schreiben</div>
+        <h2>Kontaktformular</h2>
+
+        {sent && (
+          <div class="form-notice form-notice--ok">
+            Deine Nachricht wurde erfolgreich gesendet. Wir melden uns bald bei dir!
+          </div>
+        )}
+        {error && (
+          <div class="form-notice form-notice--err">
+            Leider ist etwas schiefgelaufen. Bitte versuch es erneut oder schreib uns direkt per E-Mail.
+          </div>
+        )}
+
+        <form method="POST" action="/api/contact" class="contact-form">
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Dein Name" required />
+          </div>
+          <div class="field">
+            <label for="email">E-Mail</label>
+            <input type="email" id="email" name="email" placeholder="deine@email.de" required />
+          </div>
+          <div class="field">
+            <label for="subject">Betreff</label>
+            <input type="text" id="subject" name="subject" placeholder="Worum geht es?" required />
+          </div>
+          <div class="field">
+            <label for="message">Nachricht</label>
+            <textarea id="message" name="message" rows="6" placeholder="Was möchtest du uns mitteilen?" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-submit">Nachricht senden</button>
+        </form>
+      </div>
+
+      <!-- RIGHT: Info -->
+      <div class="info-col">
+        <div class="info-block">
+          <div class="section-label">Direktkontakt</div>
+          <h3>E-Mail</h3>
+          <a href="mailto:vorstand@dumbdecision.de" class="contact-link">
+            vorstand@dumbdecision.de
+          </a>
+        </div>
+
+        <div class="info-block">
+          <h3>Discord</h3>
+          <p class="info-desc">
+            Unser Discord ist unsere Hauptplattform.
+            Über den Link erhältst du temporären Zugang —
+            schreib einem Mod, um dauerhaft dabei zu sein.
+          </p>
+          <a href="https://discord.gg/scUj3uw8zWt" target="_blank" rel="noopener noreferrer" class="btn btn-primary info-discord-btn">
+            Discord beitreten ↗
+          </a>
+        </div>
+
+        <div class="info-block info-socials-block">
+          <h3>Folg uns</h3>
+          <div class="social-list">
+            <a href="https://www.youtube.com/@dumbdecisionttrpg" target="_blank" rel="noopener noreferrer" class="social-item">
+              <span class="social-name">YouTube</span>
+              <span class="social-handle">@dumbdecisionttrpg</span>
+            </a>
+            <a href="https://www.twitch.tv/dumbdecision" target="_blank" rel="noopener noreferrer" class="social-item">
+              <span class="social-name">Twitch</span>
+              <span class="social-handle">dumbdecision</span>
+            </a>
+            <a href="https://www.instagram.com/dumbdecisionttrpg" target="_blank" rel="noopener noreferrer" class="social-item">
+              <span class="social-name">Instagram</span>
+              <span class="social-handle">@dumbdecisionttrpg</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <Footer />
+</Base>
+
+<style>
+
+  /* ── KONTAKT SECTION ── */
+  .kontakt-section { padding: 7rem var(--section-px) 8rem; }
+  .kontakt-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 7rem; align-items: start;
+  }
+
+  /* ── FORM ── */
+  .form-col h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 2rem; }
+
+  .form-notice {
+    padding: 1rem 1.5rem;
+    border: 1px solid;
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+  .form-notice--ok  { border-color: rgba(155,127,90,0.4); color: var(--parch-lt); background: rgba(155,127,90,0.07); }
+  .form-notice--err { border-color: rgba(180,60,60,0.4);  color: #C08080; background: rgba(180,60,60,0.07); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .field label {
+    font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--parch);
+  }
+  .field input,
+  .field textarea {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    padding: 0.85rem 1.2rem;
+    transition: border-color 0.25s;
+    resize: vertical;
+    width: 100%;
+  }
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--dim); opacity: 0.5; }
+  .field input:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--parch);
+  }
+
+  .btn-submit { width: 100%; justify-content: center; font-size: 0.75rem; }
+
+  /* ── INFO ── */
+  .info-col { display: flex; flex-direction: column; gap: 3rem; padding-top: 3.5rem; }
+  .info-block h3 { font-size: 1.3rem; margin-bottom: 0.75rem; }
+  .contact-link {
+    font-family: 'EB Garamond', serif; font-size: 1.15rem;
+    color: var(--parch-lt); text-decoration: none;
+    border-bottom: 1px solid rgba(155,127,90,0.25);
+    padding-bottom: 0.15rem;
+    transition: border-color 0.25s, color 0.25s;
+    display: inline-block;
+  }
+  .contact-link:hover { color: var(--text); border-color: var(--parch); }
+
+  .info-desc { font-size: 0.875rem; color: var(--dim); line-height: 1.75; margin-bottom: 1.25rem; }
+  .info-discord-btn { display: inline-block; }
+
+  .social-list { display: flex; flex-direction: column; gap: 2px; }
+  .social-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg2); border: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    transition: border-color 0.25s;
+  }
+  .social-item:hover { border-color: rgba(155,127,90,0.38); }
+  .social-name {
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--parch);
+  }
+  .social-handle { font-size: 0.85rem; color: var(--dim); }
+
+  @media (max-width: 860px) {
+    .kontakt-inner { grid-template-columns: 1fr; gap: 4rem; }
+    .info-col { padding-top: 0; }
+  }
+
+  @media (max-width: 640px) {
+    .kontakt-section { padding: 5rem var(--section-px); }
+    .kontakt-inner { gap: 3rem; }
+    .form-col h2 { margin-bottom: 1.5rem; }
+    .info-block h3 { font-size: 1.15rem; }
+    .social-item { padding: 0.875rem 1rem; }
+    .info-discord-btn { width: 100%; text-align: center; }
+  }
+</style>

@@ -1,0 +1,245 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+
+const facts = [
+  { label: 'Geografie',   value: 'Tiefe Ozeane & verstreute Kontinente' },
+  { label: 'Kosmologie',  value: 'Lebendiges, uraltes Sternensystem' },
+  { label: 'Aktive Kampagne', value: 'Campaign IV' },
+  { label: 'System',      value: 'D&D 5.5E · Daggerheart' },
+  { label: 'Setting',     value: 'One-World · Alle Gruppen, eine Welt' },
+  { label: 'Status',      value: 'Aktiv & wachsend' },
+];
+---
+
+<Base title="Caerathis" description="Entdecke Caerathis — die lebendige Welt von Dumb Decision TTRPG aus tiefen Ozeanen, verstreuten Kontinenten und einem uralten Sternensystem.">
+  <Nav />
+
+  <PageHeader
+    label="Unsere Welt"
+    title="Caerathis."
+    subtitle="Eine Welt aus Ozeanen, Sternen und unerzählten Geschichten."
+    ghost="Caerathis"
+  />
+
+  <!-- EINLEITUNG -->
+  <section class="intro">
+    <div class="intro-inner">
+      <div class="intro-quote-block">
+        <span class="quote-mark">"</span>
+        <blockquote>
+          Für jene, die an ihren Küsten leben, ist sie grenzenlos —
+          eine endlose Weite voller Geheimnisse, in der der Horizont
+          niemals die Grenze darstellt.
+        </blockquote>
+      </div>
+      <div class="intro-text">
+        <p>
+          Caerathis ist eine Welt aus tiefen Ozeanen und verstreuten Kontinenten,
+          schwebend in einem lebendigen und uralten Sternensystem.
+          Von den hohen Gipfeln ihrer Berge bis zu den unerforschten Gräben
+          ihrer Meere birgt Caerathis sowohl natürliche als auch übernatürliche
+          Wunder — die darauf warten, beansprucht, erforscht oder gefürchtet zu werden.
+        </p>
+        <p>
+          Caerathis ist keine statische Kulisse. Sie ist ein lebendiges System,
+          das sich mit jeder Kampagne verändert. Was eine Gruppe erlebt,
+          hinterlässt Spuren — für alle anderen Abenteurer, die kommen werden.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="ornament">
+    <div class="ornament-line"></div>
+    <div class="ornament-glyph">✦</div>
+    <div class="ornament-line"></div>
+  </div>
+
+  <!-- WORLD FACTS -->
+  <section class="world-facts">
+    <div class="world-facts-inner">
+      <div class="section-label">Weltdaten</div>
+      <h2>Was wir wissen.</h2>
+      <div class="facts-grid">
+        {facts.map(f => (
+          <div class="fact-item">
+            <span class="fact-label">{f.label}</span>
+            <span class="fact-value">{f.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- PILLARS -->
+  <section class="pillars-section">
+    <div class="pillars-inner">
+      <div class="section-label">Die Säulen von Caerathis</div>
+      <h2>Was diese Welt ausmacht.</h2>
+      <div class="world-pillars">
+
+        <div class="world-pillar">
+          <div class="pillar-glyph">〰</div>
+          <h3>Die Ozeane</h3>
+          <p>
+            Caerathis ist vor allem Wasser. Die Kontinente sind Inseln in einem
+            endlosen Meer — manche klein und vergessen, andere riesig und voller
+            alter Reiche. Das Meer trennt nicht nur. Es verbindet, und es birgt
+            Geheimnisse, die kein Kartograf je verzeichnet hat.
+          </p>
+        </div>
+
+        <div class="world-pillar">
+          <div class="pillar-glyph">✶</div>
+          <h3>Die Sterne</h3>
+          <p>
+            Das Sternensystem über Caerathis ist lebendig — nicht nur im Sinne
+            von Magie oder Mythos, sondern buchstäblich. Die Sterne bewegen sich,
+            verändern sich, und wer lange genug hinschaut, beginnt zu glauben,
+            dass sie zurückschauen.
+          </p>
+        </div>
+
+        <div class="world-pillar">
+          <div class="pillar-glyph">◇</div>
+          <h3>Die Wunder</h3>
+          <p>
+            Von natürlichen Phänomenen bis zu übernatürlichen Anomalien —
+            Caerathis ist ein Ort, an dem das Unmögliche möglich ist.
+            Manches wartet darauf, entdeckt zu werden. Manches wartet
+            lieber darauf, dass niemand es findet.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ONE WORLD -->
+  <section class="one-world">
+    <div class="one-world-glow"></div>
+    <div class="one-world-inner">
+      <div class="section-label">Das One-World-Prinzip</div>
+      <h2>Eine Welt. Viele Geschichten.</h2>
+      <p>
+        Alle Kampagnen von Dumb Decision TTRPG spielen in Caerathis —
+        und keine davon existiert in einem Vakuum. Was Gruppe A in ihrer Session
+        entscheidet, kann die politische Lage für Gruppe B verändern.
+        Helden werden zu Legenden. Legenden werden zu Mythen.
+      </p>
+      <p>
+        Das ist Project Mysteria: eine Welt, die lebt, wächst und sich erinnert —
+        gespeist von den Entscheidungen all ihrer Abenteurer.
+      </p>
+      <a href="/ueber-uns#mysteria" class="text-link">Mehr über Project Mysteria →</a>
+    </div>
+  </section>
+
+  <Footer />
+</Base>
+
+<style>
+
+  /* ── INTRO ── */
+  .intro { padding: 7rem var(--section-px); }
+  .intro-inner {
+    max-width: var(--max-w); margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: start;
+  }
+  .intro-quote-block { position: relative; }
+  .quote-mark {
+    font-family: 'EB Garamond', serif; font-size: 8rem; font-weight: 400;
+    color: var(--parch); opacity: 0.2;
+    position: absolute; top: -2rem; left: -1rem;
+    line-height: 1; pointer-events: none;
+  }
+  blockquote {
+    font-family: 'EB Garamond', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    color: var(--text); line-height: 1.6;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--parch);
+    margin-top: 1rem;
+  }
+  .intro-text p {
+    font-size: 0.92rem; color: var(--dim); line-height: 1.85; margin-bottom: 1.25rem;
+  }
+
+  /* ── WORLD FACTS ── */
+  .world-facts { padding: 0 var(--section-px) 7rem; }
+  .world-facts-inner { max-width: var(--max-w); margin: 0 auto; }
+  .world-facts h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 3rem; }
+  .facts-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  }
+  .fact-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    padding: 1.75rem 2rem;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .fact-label {
+    font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--parch); opacity: 0.7;
+  }
+  .fact-value { font-family: 'EB Garamond', serif; font-size: 1.1rem; color: var(--text); }
+
+  /* ── PILLARS ── */
+  .pillars-section {
+    background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 7rem var(--section-px);
+  }
+  .pillars-inner { max-width: var(--max-w); margin: 0 auto; }
+  .pillars-section h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: 3rem; }
+  .world-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .world-pillar {
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 2.5rem 2rem; transition: border-color 0.25s;
+  }
+  .world-pillar:hover { border-color: rgba(155,127,90,0.38); }
+  .pillar-glyph {
+    font-size: 1.5rem; color: var(--parch); opacity: 0.5;
+    margin-bottom: 1.25rem; display: block;
+  }
+  .world-pillar h3 { font-size: 1.3rem; margin-bottom: 1rem; }
+  .world-pillar p { font-size: 0.875rem; color: var(--dim); line-height: 1.8; }
+
+  /* ── ONE WORLD ── */
+  .one-world {
+    padding: 8rem var(--section-px); text-align: center; position: relative; overflow: hidden;
+  }
+  .one-world-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(155,127,90,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .one-world-inner { max-width: 640px; margin: 0 auto; position: relative; }
+  .one-world h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2rem; }
+  .one-world p {
+    font-size: 0.92rem; color: var(--dim); line-height: 1.85; margin-bottom: 1.25rem;
+  }
+  .one-world .text-link { display: inline-block; margin-top: 1rem; }
+
+  @media (max-width: 860px) {
+    .intro-inner { grid-template-columns: 1fr; gap: 4rem; }
+    .facts-grid { grid-template-columns: 1fr 1fr; }
+    .world-pillars { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .intro { padding: 5rem var(--section-px); }
+    .intro-inner { gap: 3rem; }
+    .quote-mark { font-size: 5rem; top: -1.5rem; left: -0.5rem; }
+    blockquote { font-size: clamp(1.1rem, 4.5vw, 1.4rem); padding-left: 1rem; }
+    .world-facts { padding-bottom: 5rem; }
+    .world-facts h2 { margin-bottom: 2rem; }
+    .pillars-section { padding: 5rem var(--section-px); }
+    .pillars-section h2 { margin-bottom: 2rem; }
+    .world-pillar { padding: 1.75rem 1.5rem; }
+    .one-world { padding: 5rem var(--section-px); }
+    .facts-grid { grid-template-columns: 1fr; }
+    .fact-item { padding: 1.25rem 1.5rem; }
+  }
+</style>
