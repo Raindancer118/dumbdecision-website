@@ -58,10 +58,11 @@ import PageHeader from '../components/PageHeader.astro';
                 autocomplete="bday" required />
             </div>
 
-            <div class="field">
+            <div class="field address-wrap">
               <label for="strasse">Straße &amp; Hausnummer <span class="req">*</span></label>
-              <input type="text" id="strasse" name="strasse" autocomplete="street-address"
+              <input type="text" id="strasse" name="strasse" autocomplete="off"
                 placeholder="Musterstraße 42" required />
+              <ul id="addressSuggestions" class="addr-suggestions" hidden></ul>
             </div>
 
             <div class="field-row">
@@ -242,6 +243,115 @@ import PageHeader from '../components/PageHeader.astro';
   const consentBox  = document.getElementById('consent')       as HTMLInputElement;
   const formWrap    = document.getElementById('formWrap')      as HTMLDivElement;
   const successWrap = document.getElementById('successWrap')   as HTMLDivElement;
+
+  // ── Address autocomplete (Photon / OSM) ───────────────────────────────────
+  const strasseInput    = document.getElementById('strasse')            as HTMLInputElement;
+  const plzInput        = document.getElementById('plz')               as HTMLInputElement;
+  const ortInput        = document.getElementById('ort')               as HTMLInputElement;
+  const suggestionsList = document.getElementById('addressSuggestions') as HTMLUListElement;
+
+  interface PhotonFeature {
+    properties: {
+      name?: string;
+      street?: string;
+      housenumber?: string;
+      postcode?: string;
+      city?: string;
+      town?: string;
+      village?: string;
+    };
+  }
+
+  function addrCity(p: PhotonFeature['properties']): string {
+    return p.city ?? p.town ?? p.village ?? '';
+  }
+
+  function buildLabel(p: PhotonFeature['properties']): string {
+    const street = p.street ?? p.name ?? '';
+    const num    = p.housenumber ? ` ${p.housenumber}` : '';
+    const city   = addrCity(p);
+    const plz    = p.postcode ?? '';
+    return [street + num, plz && city ? `${plz} ${city}` : city || plz].filter(Boolean).join(', ');
+  }
+
+  let _addrTimer: ReturnType<typeof setTimeout>;
+
+  function hideSuggestions() {
+    suggestionsList.hidden = true;
+    suggestionsList.innerHTML = '';
+  }
+
+  async function fetchSuggestions(q: string) {
+    if (q.length < 3) { hideSuggestions(); return; }
+    try {
+      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lang=de&limit=6&countrycodes=de&osm_tag=place:house&osm_tag=highway`;
+      const res  = await fetch(url);
+      if (!res.ok) return;
+      const data = await res.json() as { features: PhotonFeature[] };
+
+      // filter to entries that have a street+housenumber or at least a street
+      const hits = data.features.filter(f => f.properties.street ?? f.properties.name);
+      if (!hits.length) { hideSuggestions(); return; }
+
+      suggestionsList.innerHTML = '';
+      hits.forEach(feat => {
+        const p   = feat.properties;
+        const li  = document.createElement('li');
+        li.className = 'addr-item';
+        li.tabIndex = 0;
+        li.textContent = buildLabel(p);
+        li.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          const street = p.street ?? p.name ?? '';
+          const num    = p.housenumber ? ` ${p.housenumber}` : '';
+          strasseInput.value = street + num;
+          if (p.postcode) plzInput.value = p.postcode.slice(0, 5);
+          const city = addrCity(p);
+          if (city) ortInput.value = city;
+          hideSuggestions();
+        });
+        suggestionsList.appendChild(li);
+      });
+      suggestionsList.hidden = false;
+    } catch { /* network error — fail silently */ }
+  }
+
+  strasseInput.addEventListener('input', () => {
+    clearTimeout(_addrTimer);
+    _addrTimer = setTimeout(() => fetchSuggestions(strasseInput.value.trim()), 300);
+  });
+  strasseInput.addEventListener('blur', () => setTimeout(hideSuggestions, 150));
+  strasseInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideSuggestions();
+    if (e.key === 'ArrowDown') {
+      const first = suggestionsList.querySelector('.addr-item') as HTMLElement | null;
+      first?.focus();
+      e.preventDefault();
+    }
+  });
+
+  // keyboard nav inside suggestion list
+  suggestionsList.addEventListener('keydown', (e) => {
+    const items = [...suggestionsList.querySelectorAll<HTMLElement>('.addr-item')];
+    const idx   = items.indexOf(document.activeElement as HTMLElement);
+    if (e.key === 'ArrowDown') { items[idx + 1]?.focus(); e.preventDefault(); }
+    if (e.key === 'ArrowUp')   { idx > 0 ? items[idx - 1]?.focus() : strasseInput.focus(); e.preventDefault(); }
+    if (e.key === 'Enter')     { (document.activeElement as HTMLElement)?.dispatchEvent(new MouseEvent('mousedown')); e.preventDefault(); }
+    if (e.key === 'Escape')    { hideSuggestions(); strasseInput.focus(); }
+  });
+
+  // PLZ → Ort auto-fill (openplzapi.org)
+  plzInput.addEventListener('input', async () => {
+    const plz = plzInput.value.trim();
+    if (plz.length !== 5 || !/^\d{5}$/.test(plz)) return;
+    if (ortInput.value.trim()) return; // don't overwrite manual entry
+    try {
+      const res  = await fetch(`https://openplzapi.org/de/Localities?postalCode=${plz}`);
+      if (!res.ok) return;
+      const data = await res.json() as Array<{ name: string }>;
+      if (data[0]?.name) ortInput.value = data[0].name;
+    } catch { /* fail silently */ }
+  });
 
   // ── Name sanity check ──────────────────────────────────────────────────────
   const NAME_RE = /^[\p{L}\p{M}][\p{L}\p{M} '\-]*[\p{L}\p{M}]$|^[\p{L}\p{M}]{2}$/u;
@@ -611,6 +721,39 @@ import PageHeader from '../components/PageHeader.astro';
     margin-bottom: 1rem;
   }
   .success-hint { font-style: italic; }
+
+  /* ── Address autocomplete ── */
+  .address-wrap { position: relative; }
+  .addr-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--bg2);
+    border: 1px solid var(--parch);
+    border-top: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 240px;
+    overflow-y: auto;
+  }
+  .addr-item {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.88rem;
+    color: var(--dim);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.4;
+  }
+  .addr-item:last-child { border-bottom: none; }
+  .addr-item:hover,
+  .addr-item:focus {
+    background: rgba(155,127,90,.12);
+    color: var(--text);
+    outline: none;
+  }
 
   /* ── Responsive ── */
   @media (max-width: 600px) {
