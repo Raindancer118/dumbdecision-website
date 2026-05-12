@@ -484,20 +484,28 @@ function tplApproval(app: Application, invite: string | null): string {
       Dein persönlicher Einladungslink:
     </p>
 
-    ${invite
-      ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:1.25rem 0;">
-           <tr>
-             <td align="center">
-               <a href="${invite}"
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:1.25rem 0;">
+      <tr>
+        <td align="center" style="padding-bottom:.75rem;">
+          ${invite
+            ? `<a href="${invite}"
                   style="display:inline-block;padding:.85rem 2.25rem;text-decoration:none;font-family:Arial,sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid #9B7F5A;color:#E2D8C8;background:rgba(155,127,90,.15);">
                  Discord beitreten &nbsp;↗
-               </a>
-             </td>
-           </tr>
-         </table>
-         <p style="margin:0 0 1rem;font-size:.8rem;color:#7A6A56;text-align:center;">Dieser Link ist einmalig und für 7 Tage gültig.</p>`
-      : `<p style="margin:0 0 1rem;font-size:.9rem;color:#7A6A56;">Der Discord-Einladungslink wird dir separat zugesandt.</p>`
-    }
+               </a>`
+            : `<p style="margin:0;font-size:.9rem;color:#7A6A56;">Der Discord-Einladungslink wird dir separat zugesandt.</p>`
+          }
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <a href="https://chat.whatsapp.com/ERdM3Lo2KFm1c09xEZPX6O"
+             style="display:inline-block;padding:.85rem 2.25rem;text-decoration:none;font-family:Arial,sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid #4a7a4a;color:#8fca8f;background:rgba(74,122,74,.12);">
+            WhatsApp-Gruppe &nbsp;↗
+          </a>
+        </td>
+      </tr>
+    </table>
+    ${invite ? `<p style="margin:0 0 1rem;font-size:.8rem;color:#7A6A56;text-align:center;">Der Discord-Link ist einmalig und für 7 Tage gültig.</p>` : ''}
 
     ${divider()}
 
