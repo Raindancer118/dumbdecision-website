@@ -243,28 +243,67 @@ export async function mailRejection(app: Application): Promise<void> {
 
 // ── Email templates ─────────────────────────────────────────────────────────
 
-function base(body: string): string {
-  return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"/>
-<style>
-body{margin:0;padding:0;background:#0C0904;color:#E2D8C8;font-family:Georgia,'Times New Roman',serif}
-.w{max-width:560px;margin:0 auto;padding:2.5rem 2rem}
-.hd{border-bottom:1px solid rgba(155,127,90,.3);padding-bottom:1.25rem;margin-bottom:2rem}
-.hd h1{font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;color:#9B7F5A;margin:0}
-p{font-size:.95rem;line-height:1.75;margin:.6rem 0}
-.lbl{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:#9B7F5A;display:block;margin-bottom:.15rem;margin-top:.9rem}
-.val{color:#E2D8C8;font-size:.95rem}
-hr{border:none;border-top:1px solid rgba(155,127,90,.2);margin:1.5rem 0}
-.btn{display:inline-block;padding:.7rem 1.75rem;text-decoration:none;font-family:Arial,sans-serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;border:1px solid;margin:.35rem .35rem 0 0}
-.ok{border-color:#3a8a3a;color:#6aba6a;background:rgba(42,122,42,.1)}
-.no{border-color:#8a3a3a;color:#ba6a6a;background:rgba(122,42,42,.1)}
-.dc{border-color:#9B7F5A;color:#C4A07A;background:rgba(155,127,90,.1)}
-.otp{font-size:2.4rem;letter-spacing:.5em;color:#C9922A;text-align:center;padding:1.5rem;border:1px solid rgba(155,127,90,.3);margin:1.5rem 0}
-.ft{margin-top:2rem;padding-top:1.25rem;border-top:1px solid rgba(155,127,90,.15);font-size:.75rem;color:#7A6A56}
-</style></head><body><div class="w">
-<div class="hd"><h1>Dumb Decision TTRPG</h1></div>
-${body}
-<div class="ft">Dumb Decision TTRPG · kontakt@dumbdecision.de · dumbdecision.de</div>
-</div></body></html>`;
+const LOGO_URL = 'https://dumbdecision.de/logo-color.png';
+
+function base(body: string, subject?: string): string {
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>${subject ?? 'Dumb Decision TTRPG'}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#0C0904;font-family:Georgia,'Times New Roman',serif;color:#E2D8C8;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#0C0904;min-height:100vh;">
+    <tr><td align="center" style="padding:2.5rem 1rem 4rem;">
+
+      <!-- Card -->
+      <table role="presentation" width="100%" style="max-width:580px;background-color:#110D06;border:1px solid rgba(155,127,90,.25);" cellpadding="0" cellspacing="0">
+
+        <!-- Header with logo -->
+        <tr>
+          <td style="padding:2.25rem 2.5rem 1.75rem;border-bottom:1px solid rgba(155,127,90,.2);text-align:center;">
+            <img src="${LOGO_URL}" alt="Dumb Decision TTRPG" width="160" height="auto"
+                 style="display:block;margin:0 auto;max-width:160px;height:auto;" />
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="padding:2.25rem 2.5rem;">
+            ${body}
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:1.25rem 2.5rem 1.75rem;border-top:1px solid rgba(155,127,90,.15);text-align:center;">
+            <p style="margin:0;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#5A4E3C;">
+              Dumb Decision TTRPG &nbsp;·&nbsp;
+              <a href="mailto:kontakt@dumbdecision.de" style="color:#7A6A56;text-decoration:none;">kontakt@dumbdecision.de</a>
+              &nbsp;·&nbsp;
+              <a href="https://dumbdecision.de" style="color:#7A6A56;text-decoration:none;">dumbdecision.de</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+function sectionLabel(text: string): string {
+  return `<p style="margin:0 0 .2rem;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:#9B7F5A;">${text}</p>`;
+}
+
+function sectionValue(text: string, extra = ''): string {
+  return `<p style="margin:0 0 .9rem;font-size:.92rem;line-height:1.7;color:#E2D8C8;${extra}">${text}</p>`;
+}
+
+function divider(): string {
+  return `<hr style="border:none;border-top:1px solid rgba(155,127,90,.2);margin:1.5rem 0;" />`;
 }
 
 const EXP_LABELS: Record<string, string> = {
@@ -276,54 +315,146 @@ const EXP_LABELS: Record<string, string> = {
 
 function tplOTP(otp: string): string {
   return base(`
-<p>Du hast eine Vereinsanmeldung bei Dumb Decision TTRPG gestartet.</p>
-<p>Dein Bestätigungscode:</p>
-<div class="otp">${otp}</div>
-<p style="color:#7A6A56;font-size:.85rem">Gültig für <strong>10 Minuten</strong>. Falls du keine Anmeldung gestartet hast, ignoriere diese E-Mail.</p>`);
+    <p style="margin:0 0 1rem;font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:#9B7F5A;">Bestätigung der E-Mail-Adresse</p>
+    <p style="margin:0 0 1.25rem;font-size:1rem;line-height:1.8;color:#C8BBA8;">
+      Du hast eine Mitgliedschaftsanfrage bei <strong style="color:#E2D8C8;">Dumb Decision TTRPG</strong> gestartet.
+      Bitte bestätige deine E-Mail-Adresse mit folgendem Code:
+    </p>
+
+    <!-- OTP block -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:1.75rem 0;">
+      <tr>
+        <td align="center" style="background:rgba(201,146,42,.07);border:1px solid rgba(201,146,42,.3);padding:1.75rem 2rem;">
+          <p style="margin:0 0 .5rem;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:#9B7F5A;">Dein Code</p>
+          <p style="margin:0;font-size:2.8rem;letter-spacing:.55em;color:#C9922A;font-family:Georgia,serif;font-weight:normal;">${otp}</p>
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0;font-size:.85rem;line-height:1.75;color:#7A6A56;">
+      Gültig für <strong style="color:#9B7F5A;">10 Minuten</strong>.
+      Falls du keine Anmeldung gestartet hast, ignoriere diese E-Mail.
+    </p>
+  `, `Bestätigungscode: ${otp}`);
 }
 
 function tplAdmin(app: Application, approve: string, reject: string): string {
   const d = app.data;
   const age = Math.floor((Date.now() - new Date(d.geburtsdatum).getTime()) / (365.25 * 86_400_000));
   return base(`
-<p>Neue Vereinsanmeldung — bitte innerhalb von 30 Tagen entscheiden.</p>
-<hr/>
-<span class="lbl">Name</span><span class="val">${d.vorname} ${d.nachname}</span>
-<span class="lbl">Geburtsdatum</span><span class="val">${new Date(d.geburtsdatum).toLocaleDateString('de-DE')} (${age} Jahre)</span>
-<span class="lbl">E-Mail</span><span class="val">${d.email}</span>
-${d.telefon ? `<span class="lbl">Telefon</span><span class="val">${d.telefon}</span>` : ''}
-<span class="lbl">Adresse</span><span class="val">${d.strasse}, ${d.plz} ${d.ort}</span>
-${d.discord ? `<span class="lbl">Discord</span><span class="val">${d.discord}</span>` : ''}
-<span class="lbl">TTRPG-Erfahrung</span><span class="val">${EXP_LABELS[d.erfahrung] ?? d.erfahrung}</span>
-${d.aufmerksam ? `<span class="lbl">Aufmerksam geworden durch</span><span class="val">${d.aufmerksam}</span>` : ''}
-<span class="lbl">Motivation</span><span class="val" style="white-space:pre-wrap">${d.motivation}</span>
-<hr/>
-<p style="color:#7A6A56;font-size:.85rem">Eingegangen: ${new Date(app.createdAt).toLocaleString('de-DE')}</p>
-<a href="${approve}" class="btn ok">✓ Aufnehmen</a>
-<a href="${reject}"  class="btn no">✗ Ablehnen</a>
-<p style="color:#7A6A56;font-size:.78rem;margin-top:.75rem">Links sind 30 Tage gültig.</p>`);
+    <p style="margin:0 0 .3rem;font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:#9B7F5A;">Neue Mitgliedsanfrage</p>
+    <p style="margin:0 0 1.5rem;font-size:1.1rem;color:#E2D8C8;">
+      ${d.vorname} ${d.nachname}
+      <span style="font-size:.85rem;color:#7A6A56;margin-left:.5rem;">(${age} Jahre)</span>
+    </p>
+
+    <!-- Data grid -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+           style="background:rgba(155,127,90,.05);border:1px solid rgba(155,127,90,.15);padding:0;margin-bottom:1.5rem;">
+      <tr>
+        <td style="padding:1.25rem 1.5rem;">
+          ${sectionLabel('E-Mail')}${sectionValue(d.email)}
+          ${d.telefon ? sectionLabel('Telefon') + sectionValue(d.telefon) : ''}
+          ${sectionLabel('Adresse')}${sectionValue(`${d.strasse}, ${d.plz} ${d.ort}`)}
+          ${d.discord ? sectionLabel('Discord') + sectionValue(d.discord) : ''}
+          ${sectionLabel('Geburtsdatum')}${sectionValue(`${new Date(d.geburtsdatum).toLocaleDateString('de-DE')} · ${age} Jahre`)}
+          ${sectionLabel('TTRPG-Erfahrung')}${sectionValue(EXP_LABELS[d.erfahrung] ?? d.erfahrung)}
+          ${d.aufmerksam ? sectionLabel('Aufmerksam geworden durch') + sectionValue(d.aufmerksam) : ''}
+          ${sectionLabel('Motivation')}${sectionValue(d.motivation, 'white-space:pre-wrap;')}
+        </td>
+      </tr>
+    </table>
+
+    <p style="margin:0 0 1.25rem;font-size:.8rem;color:#5A4E3C;">
+      Eingegangen: ${new Date(app.createdAt).toLocaleString('de-DE')} &nbsp;·&nbsp; Entscheidung innerhalb von 30 Tagen erbeten.
+    </p>
+
+    <!-- Action buttons -->
+    <table role="presentation" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="padding-right:.75rem;">
+          <a href="${approve}" style="display:inline-block;padding:.75rem 1.75rem;text-decoration:none;font-family:Arial,sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;border:1px solid #3a8a3a;color:#6aba6a;background:rgba(42,122,42,.1);">✓ &nbsp;Aufnehmen</a>
+        </td>
+        <td>
+          <a href="${reject}" style="display:inline-block;padding:.75rem 1.75rem;text-decoration:none;font-family:Arial,sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;border:1px solid #8a3a3a;color:#ba6a6a;background:rgba(122,42,42,.1);">✗ &nbsp;Ablehnen</a>
+        </td>
+      </tr>
+    </table>
+    <p style="margin:.75rem 0 0;font-size:.72rem;color:#5A4E3C;">Links sind 30 Tage gültig.</p>
+  `, `[DDT] Neue Anmeldung: ${d.vorname} ${d.nachname}`);
 }
 
 function tplApproval(app: Application, invite: string | null): string {
   return base(`
-<p>Liebe*r ${app.data.vorname},</p>
-<p>wir freuen uns sehr, dich als neues Mitglied bei <em>Dumb Decision TTRPG</em> willkommen zu heißen! Deine Bewerbung wurde vom Vorstand geprüft und angenommen.</p>
-<hr/>
-<p><strong style="color:#9B7F5A">Nächster Schritt: Discord</strong></p>
-<p>Tritt unserem Discord-Server bei, um Teil der Community zu werden. Dein persönlicher Einladungslink:</p>
-${invite
-  ? `<p style="text-align:center;margin:1.5rem 0"><a href="${invite}" class="btn dc">Discord beitreten ↗</a></p>
-     <p style="color:#7A6A56;font-size:.85rem">Dieser Link ist einmalig und für 7 Tage gültig.</p>`
-  : `<p style="color:#7A6A56">Der Discord-Einladungslink wird dir separat zugesandt.</p>`}
-<hr/>
-<p>Bei Fragen erreichst du uns jederzeit unter <a href="mailto:kontakt@dumbdecision.de" style="color:#9B7F5A">kontakt@dumbdecision.de</a>.</p>
-<p style="margin-top:1.5rem;font-style:italic;color:#9B7F5A">Tom, Dominik &amp; Tobi<br/>Vorstand, Dumb Decision TTRPG</p>`);
+    <p style="margin:0 0 .3rem;font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:#C9922A;">Willkommen im Verein</p>
+    <p style="margin:0 0 1.5rem;font-size:1.15rem;line-height:1.6;color:#E2D8C8;">
+      Liebe*r <strong>${app.data.vorname}</strong>,
+    </p>
+    <p style="margin:0 0 1rem;font-size:.95rem;line-height:1.8;color:#C8BBA8;">
+      wir freuen uns sehr, dich als neues Mitglied bei
+      <strong style="color:#E2D8C8;">Dumb Decision TTRPG</strong> begrüßen zu dürfen!
+      Deine Bewerbung wurde vom Vorstand geprüft und angenommen.
+    </p>
+
+    ${divider()}
+
+    <p style="margin:0 0 .5rem;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:#9B7F5A;">Nächster Schritt</p>
+    <p style="margin:0 0 1rem;font-size:.95rem;line-height:1.8;color:#C8BBA8;">
+      Tritt jetzt unserem Discord-Server bei, um Teil der Community zu werden und dich vorzustellen.
+      Dein persönlicher Einladungslink:
+    </p>
+
+    ${invite
+      ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:1.25rem 0;">
+           <tr>
+             <td align="center">
+               <a href="${invite}"
+                  style="display:inline-block;padding:.85rem 2.25rem;text-decoration:none;font-family:Arial,sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid #9B7F5A;color:#E2D8C8;background:rgba(155,127,90,.15);">
+                 Discord beitreten &nbsp;↗
+               </a>
+             </td>
+           </tr>
+         </table>
+         <p style="margin:0 0 1rem;font-size:.8rem;color:#7A6A56;text-align:center;">Dieser Link ist einmalig und für 7 Tage gültig.</p>`
+      : `<p style="margin:0 0 1rem;font-size:.9rem;color:#7A6A56;">Der Discord-Einladungslink wird dir separat zugesandt.</p>`
+    }
+
+    ${divider()}
+
+    <p style="margin:0 0 .5rem;font-size:.92rem;line-height:1.8;color:#C8BBA8;">
+      Bei Fragen erreichst du uns jederzeit unter
+      <a href="mailto:kontakt@dumbdecision.de" style="color:#9B7F5A;text-decoration:none;">kontakt@dumbdecision.de</a>.
+    </p>
+    <p style="margin:1.5rem 0 0;font-size:.92rem;font-style:italic;color:#9B7F5A;line-height:1.7;">
+      Tom, Dominik &amp; Tobi<br/>
+      <span style="font-style:normal;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:#5A4E3C;">Vorstand · Dumb Decision TTRPG</span>
+    </p>
+  `, 'Willkommen bei Dumb Decision TTRPG!');
 }
 
 function tplRejection(app: Application): string {
   return base(`
-<p>Liebe*r ${app.data.vorname},</p>
-<p>vielen Dank für dein Interesse an <em>Dumb Decision TTRPG</em>.</p>
-<p>Nach Prüfung durch unseren Vorstand können wir deine Bewerbung zum jetzigen Zeitpunkt leider nicht annehmen. Bei Fragen stehen wir gerne unter <a href="mailto:kontakt@dumbdecision.de" style="color:#9B7F5A">kontakt@dumbdecision.de</a> zur Verfügung.</p>
-<p style="margin-top:1.5rem;font-style:italic;color:#9B7F5A">Tom, Dominik &amp; Tobi<br/>Vorstand, Dumb Decision TTRPG</p>`);
+    <p style="margin:0 0 1.5rem;font-size:1rem;line-height:1.6;color:#E2D8C8;">
+      Liebe*r <strong>${app.data.vorname}</strong>,
+    </p>
+    <p style="margin:0 0 1rem;font-size:.95rem;line-height:1.8;color:#C8BBA8;">
+      vielen Dank für dein Interesse an <strong style="color:#E2D8C8;">Dumb Decision TTRPG</strong>
+      und dafür, dass du dir die Zeit genommen hast, dich bei uns zu bewerben.
+    </p>
+    <p style="margin:0 0 1.5rem;font-size:.95rem;line-height:1.8;color:#C8BBA8;">
+      Nach eingehender Prüfung durch unseren Vorstand müssen wir dir leider mitteilen,
+      dass wir deine Bewerbung zum jetzigen Zeitpunkt nicht annehmen können.
+    </p>
+
+    ${divider()}
+
+    <p style="margin:0 0 .5rem;font-size:.92rem;line-height:1.8;color:#C8BBA8;">
+      Solltest du Fragen haben oder mehr Informationen wünschen, erreichst du uns unter
+      <a href="mailto:kontakt@dumbdecision.de" style="color:#9B7F5A;text-decoration:none;">kontakt@dumbdecision.de</a>.
+    </p>
+    <p style="margin:1.5rem 0 0;font-size:.92rem;font-style:italic;color:#9B7F5A;line-height:1.7;">
+      Tom, Dominik &amp; Tobi<br/>
+      <span style="font-style:normal;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:#5A4E3C;">Vorstand · Dumb Decision TTRPG</span>
+    </p>
+  `, 'Deine Bewerbung bei Dumb Decision TTRPG');
 }
