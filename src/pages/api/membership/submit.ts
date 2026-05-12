@@ -3,6 +3,7 @@ import {
   verifyOTP,
   createApplication,
   mailAdminNotification,
+  mailSubmissionConfirmation,
   validateEmail,
   validateName,
   type MemberData,
@@ -74,7 +75,10 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     const app = createApplication(data);
     const siteUrl = process.env.SITE_URL ?? 'https://dumbdecision.de';
-    await mailAdminNotification(app, siteUrl);
+    await Promise.all([
+      mailAdminNotification(app, siteUrl),
+      mailSubmissionConfirmation(app),
+    ]);
     return Response.json({ ok: true });
   } catch (err) {
     if (err instanceof Error && err.message === 'EMAIL_EXISTS') {

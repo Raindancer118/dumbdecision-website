@@ -223,6 +223,15 @@ export async function mailAdminNotification(app: Application, siteUrl: string): 
   });
 }
 
+export async function mailSubmissionConfirmation(app: Application): Promise<void> {
+  await mailer().sendMail({
+    from: FROM(),
+    to: app.data.email,
+    subject: 'Deine Vereinsanmeldung bei Dumb Decision TTRPG',
+    html: tplSubmissionConfirmation(app),
+  });
+}
+
 export async function mailApproval(app: Application, discordInvite: string | null): Promise<void> {
   await mailer().sendMail({
     from: FROM(),
@@ -312,6 +321,77 @@ const EXP_LABELS: Record<string, string> = {
   erfahren:   'Erfahren',
   veteran:    'Veteran',
 };
+
+function tplSubmissionConfirmation(app: Application): string {
+  const d   = app.data;
+  const age = Math.floor((Date.now() - new Date(d.geburtsdatum).getTime()) / (365.25 * 86_400_000));
+  const submittedAt = new Date(app.createdAt).toLocaleString('de-DE', { dateStyle: 'long', timeStyle: 'short' });
+  return base(`
+    <p style="margin:0 0 .3rem;font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:#9B7F5A;">Aufnahmeantrag eingegangen</p>
+    <p style="margin:0 0 1.5rem;font-size:1rem;line-height:1.8;color:#C8BBA8;">
+      Liebe*r <strong style="color:#E2D8C8;">${d.vorname}</strong>, vielen Dank für deine Anmeldung!
+      Dein Antrag ist beim Vorstand eingegangen und wird in Kürze geprüft.
+      Du erhältst eine separate E-Mail, sobald eine Entscheidung getroffen wurde.
+    </p>
+
+    ${divider()}
+
+    <!-- Antragskopie -->
+    <p style="margin:0 0 1rem;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:#9B7F5A;">Deine Angaben (Antragskopie)</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+           style="background:rgba(155,127,90,.05);border:1px solid rgba(155,127,90,.15);margin-bottom:1.75rem;">
+      <tr><td style="padding:1.25rem 1.5rem;">
+        ${sectionLabel('Name')}${sectionValue(`${d.vorname} ${d.nachname}`)}
+        ${sectionLabel('Geburtsdatum')}${sectionValue(`${new Date(d.geburtsdatum).toLocaleDateString('de-DE')} (${age} Jahre)`)}
+        ${sectionLabel('Adresse')}${sectionValue(`${d.strasse}, ${d.plz} ${d.ort}`)}
+        ${sectionLabel('E-Mail')}${sectionValue(d.email)}
+        ${d.telefon ? sectionLabel('Telefon') + sectionValue(d.telefon) : ''}
+        ${d.discord ? sectionLabel('Discord') + sectionValue(d.discord) : ''}
+        ${sectionLabel('TTRPG-Erfahrung')}${sectionValue(EXP_LABELS[d.erfahrung] ?? d.erfahrung)}
+        ${sectionLabel('Motivation')}${sectionValue(d.motivation, 'white-space:pre-wrap;')}
+      </td></tr>
+    </table>
+
+    ${divider()}
+
+    <!-- Mitgliedsvertrag -->
+    <p style="margin:0 0 1rem;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:#9B7F5A;">Mitgliedsvertrag — Dumb Decision TTRPG e.V.</p>
+
+    <p style="margin:0 0 .75rem;font-size:.88rem;line-height:1.8;color:#C8BBA8;">
+      Mit der Unterzeichnung dieses Antrags erkläre ich mich bereit, Mitglied im Verein
+      <strong style="color:#E2D8C8;">Dumb Decision TTRPG e.V.</strong> (in Gründung) zu werden
+      und erkenne die Vereinssatzung in ihrer jeweils gültigen Fassung an.
+    </p>
+
+    <p style="margin:0 0 .4rem;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#9B7F5A;">Mitgliedsbeitrag</p>
+    <p style="margin:0 0 .75rem;font-size:.88rem;line-height:1.8;color:#C8BBA8;">
+      Derzeit werden <strong style="color:#E2D8C8;">keine Mitgliedsbeiträge</strong> erhoben.
+      Der Verein behält sich vor, Beiträge zu einem späteren Zeitpunkt einzuführen.
+      Die Höhe wird von der Mitgliederversammlung beschlossen und rechtzeitig bekanntgegeben.
+    </p>
+
+    <p style="margin:0 0 .4rem;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#9B7F5A;">Kündigung</p>
+    <p style="margin:0 0 .75rem;font-size:.88rem;line-height:1.8;color:#C8BBA8;">
+      Die Mitgliedschaft kann jederzeit <strong style="color:#E2D8C8;">zum Ende des laufenden Monats</strong>
+      durch formlose E-Mail an
+      <a href="mailto:vorstand@dumbdecision.de" style="color:#9B7F5A;text-decoration:none;">vorstand@dumbdecision.de</a> gekündigt werden.
+    </p>
+
+    <p style="margin:0 0 .4rem;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:#9B7F5A;">Sonderkündigungsrecht</p>
+    <p style="margin:0 0 .75rem;font-size:.88rem;line-height:1.8;color:#C8BBA8;">
+      Werden Mitgliedsbeiträge neu eingeführt oder erhöht, besteht ein
+      <strong style="color:#E2D8C8;">Sonderkündigungsrecht</strong>:
+      Die Kündigung ist in diesem Fall bis zum Ende des übernächsten Monats nach Bekanntgabe möglich,
+      mit Wirkung zum selben Termin.
+    </p>
+
+    ${divider()}
+
+    <p style="margin:0;font-size:.78rem;color:#5A4E3C;">
+      Antrag eingegangen: ${submittedAt} &nbsp;·&nbsp; Antrags-ID: ${app.id.slice(0, 8).toUpperCase()}
+    </p>
+  `, 'Deine Vereinsanmeldung bei Dumb Decision TTRPG');
+}
 
 function tplOTP(otp: string): string {
   return base(`

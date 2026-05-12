@@ -284,12 +284,10 @@ import PageHeader from '../components/PageHeader.astro';
   async function fetchSuggestions(q: string) {
     if (q.length < 3) { hideSuggestions(); return; }
     try {
-      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lang=de&limit=6&countrycodes=de&osm_tag=place:house&osm_tag=highway`;
-      const res  = await fetch(url);
+      const res  = await fetch(`/api/address-lookup?q=${encodeURIComponent(q)}`);
       if (!res.ok) return;
       const data = await res.json() as { features: PhotonFeature[] };
 
-      // filter to entries that have a street+housenumber or at least a street
       const hits = data.features.filter(f => f.properties.street ?? f.properties.name);
       if (!hits.length) { hideSuggestions(); return; }
 
@@ -340,16 +338,16 @@ import PageHeader from '../components/PageHeader.astro';
     if (e.key === 'Escape')    { hideSuggestions(); strasseInput.focus(); }
   });
 
-  // PLZ → Ort auto-fill (openplzapi.org)
+  // PLZ → Ort auto-fill
   plzInput.addEventListener('input', async () => {
     const plz = plzInput.value.trim();
     if (plz.length !== 5 || !/^\d{5}$/.test(plz)) return;
     if (ortInput.value.trim()) return; // don't overwrite manual entry
     try {
-      const res  = await fetch(`https://openplzapi.org/de/Localities?postalCode=${plz}`);
+      const res  = await fetch(`/api/address-lookup?plz=${plz}`);
       if (!res.ok) return;
-      const data = await res.json() as Array<{ name: string }>;
-      if (data[0]?.name) ortInput.value = data[0].name;
+      const data = await res.json() as { city?: string | null };
+      if (data.city) ortInput.value = data.city;
     } catch { /* fail silently */ }
   });
 
