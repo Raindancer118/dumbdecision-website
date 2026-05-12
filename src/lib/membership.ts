@@ -252,7 +252,7 @@ export async function mailRejection(app: Application): Promise<void> {
 
 // ── Email templates ─────────────────────────────────────────────────────────
 
-const LOGO_URL = 'https://dumbdecision.de/logo-color.png';
+const LOGO_URL = 'https://dumbdecision.de/logo-color-opt.png';
 
 function base(body: string, subject?: string): string {
   return `<!DOCTYPE html>
