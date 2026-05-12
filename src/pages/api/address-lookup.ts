@@ -23,11 +23,12 @@ export const GET: APIRoute = async ({ url }) => {
   if (!q || q.length < 3) return Response.json({ features: [] });
 
   try {
+    // bbox: Germany bounding box (minLon,minLat,maxLon,maxLat)
     const params = new URLSearchParams({
       q,
       lang: 'de',
       limit: '6',
-      countrycodes: 'de',
+      bbox: '5.5,47.0,15.5,55.5',
     });
     const res = await fetch(`https://photon.komoot.io/api/?${params}`, {
       headers: { 'User-Agent': 'dumbdecision.de/address-lookup' },
