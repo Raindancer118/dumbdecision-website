@@ -51,7 +51,10 @@ import Logo from '../components/Logo.astro';
         offenen Ort für alle, die das Geschichtenerzählen lieben.
         Wir fördern Jugendhilfe, Bildung und Kreativität durch Pen-&amp;-Paper-Rollenspiele.
       </p>
-      <a href="/ueber-uns" class="text-link">Unsere Geschichte →</a>
+      <div class="intro-links">
+        <a href="/ueber-uns" class="text-link">Unsere Geschichte →</a>
+        <a href="/satzung" class="text-link">Vereinssatzung →</a>
+      </div>
     </div>
 
     <div class="pillars">
@@ -181,7 +184,8 @@ import Logo from '../components/Logo.astro';
     font-size: 1.15rem; color: var(--dim);
     margin-bottom: 1.25rem; line-height: 1.65;
   }
-  .intro-body { font-size: 0.9rem; color: var(--dim); line-height: 1.85; margin-bottom: 2rem; }
+  .intro-body { font-size: 0.9rem; color: var(--dim); line-height: 1.85; margin-bottom: 1.5rem; }
+  .intro-links { display: flex; flex-wrap: wrap; gap: 1.5rem; }
   .pillars { display: flex; flex-direction: column; gap: 2px; }
   .pillar {
     background: var(--bg2); border: 1px solid var(--border);

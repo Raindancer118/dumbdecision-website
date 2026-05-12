@@ -3,6 +3,20 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import PageHeader from '../components/PageHeader.astro';
+import { versions, type Item } from '../data/satzung';
+
+const requestedId = Astro.url.searchParams.get('v');
+const current     = requestedId
+  ? (versions.find(v => v.id === requestedId) ?? versions[0]!)
+  : versions[0]!;
+const archive     = versions.filter(v => v.id !== current.id);
+const isArchived  = current.id !== versions[0]!.id;
+
+function renderItem(item: Item): string {
+  if (typeof item === 'string') return item;
+  const subs = item.sub.map(s => `<li>${s}</li>`).join('');
+  return `${item.text}<ul class="sub-list">${subs}</ul>`;
+}
 ---
 
 <Base
@@ -20,123 +34,54 @@ import PageHeader from '../components/PageHeader.astro';
   <section class="legal-section">
     <div class="legal-inner">
 
-      <div class="legal-block">
-        <h2>§ 1 Name, Sitz, Geschäftsjahr</h2>
-        <ol>
-          <li>Der Verein führt den Namen <em>Dumb Decision TTRPG</em>. Nach Eintragung ins Vereinsregister trägt er den Zusatz „e.&nbsp;V.".</li>
-          <li>Der Verein hat seinen Sitz in Hamburg.</li>
-          <li>Das Geschäftsjahr ist das Kalenderjahr.</li>
-        </ol>
-      </div>
+      {/* Archive notice */}
+      {isArchived && (
+        <div class="legal-notice legal-notice--warn">
+          <span class="section-label">Archivierte Version</span>
+          <p>
+            Du siehst eine ältere Version der Satzung ({current.label}, {current.date}).
+            <a href="/satzung" class="text-link">Zur aktuellen Version →</a>
+          </p>
+        </div>
+      )}
 
-      <div class="legal-block">
-        <h2>§ 2 Zweck des Vereins</h2>
-        <ol>
-          <li>Zweck des Vereins ist die <strong>Förderung der Jugendhilfe, Bildung, Kunst und Kultur</strong> durch das gemeinschaftliche Spielen und Erleben von <strong>Pen-&amp;-Paper-Rollenspielen</strong>, insbesondere Dungeons &amp; Dragons.</li>
-          <li>Der Verein richtet sich insbesondere an <strong>Jugendliche und junge Erwachsene im Alter von etwa 14 bis 25 Jahren</strong>, bietet jedoch eine offene und inklusive Gemeinschaft für alle Interessierten.</li>
-          <li>Der Verein verfolgt ausschließlich und unmittelbar <strong>gemeinnützige Zwecke</strong> im Sinne des Abschnitts „Steuerbegünstigte Zwecke" der Abgabenordnung (§§ 51 ff. AO).</li>
-          <li>
-            Der Satzungszweck wird insbesondere verwirklicht durch:
-            <ul>
-              <li>regelmäßige Spielrunden und Workshops,</li>
-              <li>öffentliche Veranstaltungen, Einsteigerhilfen, Kreativtreffen,</li>
-              <li>Förderung sozialer und kreativer Kompetenzen,</li>
-              <li>Bereitstellung von Spielmaterialien und Räumlichkeiten,</li>
-              <li>Kooperationen mit Schulen, Jugendzentren und sozialen Einrichtungen.</li>
-            </ul>
-          </li>
-        </ol>
-      </div>
+      {/* Archive buttons */}
+      {(archive.length > 0 || isArchived) && (
+        <div class="archive-bar">
+          <span class="archive-label">Versionen</span>
+          <div class="archive-btns">
+            <a
+              href="/satzung"
+              class={`archive-btn${!isArchived ? ' archive-btn--active' : ''}`}
+            >
+              {versions[0]!.label}
+              <span class="archive-date">{versions[0]!.date}</span>
+            </a>
+            {archive.map(v => (
+              <a
+                href={`/satzung?v=${v.id}`}
+                class={`archive-btn${current.id === v.id ? ' archive-btn--active' : ''}`}
+              >
+                {v.label}
+                <span class="archive-date">{v.date}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
-      <div class="legal-block">
-        <h2>§ 3 Selbstlosigkeit</h2>
-        <ol>
-          <li>Der Verein ist <strong>selbstlos tätig</strong> und verfolgt <strong>nicht in erster Linie eigenwirtschaftliche Zwecke</strong>.</li>
-          <li>Mittel des Vereins dürfen nur für satzungsgemäße Zwecke verwendet werden.</li>
-          <li>Die Mitglieder erhalten in ihrer Eigenschaft als Mitglieder keine Zuwendungen aus Mitteln des Vereins.</li>
-        </ol>
-      </div>
-
-      <div class="legal-block">
-        <h2>§ 4 Mitgliedschaft</h2>
-        <ol>
-          <li>Mitglied kann jede natürliche Person ab 14 Jahren werden, die die Ziele des Vereins unterstützt.</li>
-          <li>Über den schriftlichen Aufnahmeantrag entscheidet der Vorstand.</li>
-          <li>Minderjährige benötigen die Einwilligung ihrer gesetzlichen Vertretung.</li>
-          <li>Die Mitgliedschaft endet durch Austritt, Ausschluss oder Tod.</li>
-          <li>Der Austritt ist jederzeit zum Ende des laufenden Monats durch formlose E-Mail an <strong>vorstand@dumbdecision.de</strong> möglich.</li>
-        </ol>
-      </div>
-
-      <div class="legal-block">
-        <h2>§ 5 Beiträge</h2>
-        <ol>
-          <li>Der Verein behält sich vor, Mitgliedsbeiträge zu erheben. Über Einführung und Höhe entscheidet die Mitgliederversammlung; die Mitglieder werden rechtzeitig informiert.</li>
-          <li>Werden Mitgliedsbeiträge neu eingeführt oder erhöht, steht jedem Mitglied ein <strong>Sonderkündigungsrecht</strong> zu: Die Kündigung ist bis zum Ende des übernächsten Monats nach Bekanntgabe möglich und wirkt zum selben Termin.</li>
-          <li>In begründeten Fällen kann der Vorstand Beiträge ganz oder teilweise erlassen.</li>
-        </ol>
-      </div>
-
-      <div class="legal-block">
-        <h2>§ 6 Organe des Vereins</h2>
-        <p>Die Organe des Vereins sind:</p>
-        <ol>
-          <li>die <strong>Mitgliederversammlung</strong></li>
-          <li>der <strong>Vorstand</strong></li>
-        </ol>
-      </div>
-
-      <div class="legal-block">
-        <h2>§ 7 Vorstand</h2>
-        <ol>
-          <li>
-            Der Vorstand besteht aus mindestens drei Personen:
-            <ul>
-              <li>dem/der 1. Vorsitzenden</li>
-              <li>dem/der stellvertretenden Vorsitzenden</li>
-              <li>dem/der Kassenwart:in</li>
-            </ul>
-          </li>
-          <li>Der Vorstand wird von der Mitgliederversammlung für die Dauer von zwei Jahren gewählt. Wiederwahl ist möglich.</li>
-          <li>Der Verein wird gerichtlich und außergerichtlich durch zwei Vorstandsmitglieder vertreten (§ 26 BGB).</li>
-          <li>Der Vorstand führt die Geschäfte des Vereins ehrenamtlich.</li>
-        </ol>
-      </div>
-
-      <div class="legal-block">
-        <h2>§ 8 Mitgliederversammlung</h2>
-        <ol>
-          <li>Die Mitgliederversammlung ist das höchste Organ des Vereins.</li>
-          <li>Sie findet mindestens einmal im Jahr statt. Sie wird vom Vorstand schriftlich mit einer Frist von zwei Wochen unter Angabe der Tagesordnung einberufen.</li>
-          <li>
-            Aufgaben:
-            <ul>
-              <li>Wahl und Abberufung des Vorstands</li>
-              <li>Entgegennahme des Jahresberichts</li>
-              <li>Entlastung des Vorstands</li>
-              <li>Festlegung der Mitgliedsbeiträge</li>
-              <li>Satzungsänderungen und Auflösung des Vereins</li>
-            </ul>
-          </li>
-          <li>Beschlüsse werden mit einfacher Mehrheit gefasst. Satzungsänderungen erfordern eine 2/3-Mehrheit.</li>
-        </ol>
-      </div>
-
-      <div class="legal-block">
-        <h2>§ 9 Auflösung des Vereins</h2>
-        <ol>
-          <li>Bei Auflösung des Vereins oder Wegfall steuerbegünstigter Zwecke fällt das Vermögen des Vereins an eine juristische Person des öffentlichen Rechts oder eine andere steuerbegünstigte Körperschaft, die es <strong>unmittelbar und ausschließlich für gemeinnützige Zwecke der Jugendhilfe oder Bildung</strong> zu verwenden hat.</li>
-          <li>Über die konkrete Organisation entscheidet die Mitgliederversammlung bei Auflösung.</li>
-        </ol>
-      </div>
-
-      <div class="legal-block">
-        <h2>§ 10 Datenschutz</h2>
-        <ol>
-          <li>Der Verein erhebt und speichert personenbezogene Daten seiner Mitglieder ausschließlich zur Erfüllung der Vereinszwecke und -pflichten.</li>
-          <li>Eine Weitergabe an Dritte erfolgt nur, wenn dies zur Erfüllung des Vereinszwecks notwendig ist.</li>
-        </ol>
-      </div>
+      {/* Current sections */}
+      {current.sections.map(section => (
+        <div class="legal-block">
+          <h2>{section.heading}</h2>
+          {section.intro && <p>{section.intro}</p>}
+          <ol>
+            {section.items.map(item => (
+              <li set:html={renderItem(item)} />
+            ))}
+          </ol>
+        </div>
+      ))}
 
     </div>
   </section>
@@ -155,6 +100,68 @@ import PageHeader from '../components/PageHeader.astro';
     flex-direction: column;
     gap: 3.5rem;
   }
+
+  /* ── Notices ── */
+  .legal-notice {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    padding: 1.25rem 1.75rem;
+    background: var(--bg2);
+  }
+  .legal-notice--warn { border-left-color: #8a5a2a; }
+  .legal-notice .section-label { margin-bottom: 0.5rem; }
+  .legal-notice p {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--dim);
+    margin: 0;
+  }
+
+  /* ── Archive bar ── */
+  .archive-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .archive-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--parch);
+  }
+  .archive-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .archive-btn {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--dim);
+    text-decoration: none;
+    font-size: 0.78rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .archive-btn:hover {
+    border-color: var(--parch);
+    color: var(--text);
+  }
+  .archive-btn--active {
+    border-color: var(--gold);
+    color: var(--parch-lt);
+    background: rgba(201,146,42,.07);
+  }
+  .archive-date {
+    font-size: 0.68rem;
+    color: var(--dim);
+    opacity: 0.7;
+  }
+
+  /* ── Content ── */
   .legal-block h2 {
     font-size: clamp(1.2rem, 2.5vw, 1.6rem);
     margin-bottom: 1rem;
@@ -165,7 +172,7 @@ import PageHeader from '../components/PageHeader.astro';
     font-size: 0.92rem;
     line-height: 1.85;
     color: var(--dim);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
   }
   .legal-block ol {
     margin: 0.5rem 0 0 1.5rem;
@@ -174,20 +181,17 @@ import PageHeader from '../components/PageHeader.astro';
     gap: 0.6rem;
     list-style: decimal;
   }
-  .legal-block ul {
-    margin: 0.5rem 0 0 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    list-style: disc;
-  }
   .legal-block li {
     font-size: 0.92rem;
     line-height: 1.75;
     color: var(--dim);
   }
-  .legal-block strong {
-    color: var(--parch-lt);
-    font-weight: 600;
+  .legal-block :global(.sub-list) {
+    margin: 0.4rem 0 0 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    list-style: disc;
   }
+  .legal-block strong { color: var(--parch-lt); font-weight: 600; }
 </style>
